@@ -1,6 +1,6 @@
 # Sylvania Lightify Plugin for Indigo
 
-<img src="/assets/img/lightify-icon.png" width="100"/>
+<img src="/assets/img/lightify-icon.png" width="150"/>&nbsp;&nbsp;&nbsp;<img src="/assets/img/indigo-icon.png" width="150"/>
 
 
 ### Plugin Config
