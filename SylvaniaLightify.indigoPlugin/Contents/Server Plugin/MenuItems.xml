@@ -1,0 +1,127 @@
+<MenuItems>
+	<MenuItem id="toggleDebug">
+		<Name>Toggle Debugging</Name>
+        <CallbackMethod>toggleDebugging</CallbackMethod>
+	</MenuItem>
+
+
+	<MenuItem id="saveScene">
+		<Name>Edit Scenes...</Name>
+		<!--
+		<CallbackMethod>saveScene</CallbackMethod>
+		<ButtonTitle>Save</ButtonTitle>
+		-->
+		<ConfigUI>
+			<Field id="sceneId" type="menu" defaultValue="">
+				<Label>Scene:</Label>
+				<List class="self" method="sceneListGenerator"></List>
+				<CallbackMethod>scenesListItemSelected</CallbackMethod>
+			</Field>
+			<Field id="sceneIdLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray">
+				<Label>Select the Scene preset for storing the configuration. Scenes with an asterisk (*) next to them have data already saved in them.</Label>
+			</Field>
+			<Field id="sceneName" type="textfield" defaultValue="">
+				<Label>Scene Name:</Label>
+			</Field>
+			<Field id="sceneNameLabel" type="label" alignWithControl="true" fontSize="small" fontColor="darkgray">
+				<Label>Assign a name to this Scene.</Label>
+			</Field>
+			<Field id="simpleSeparator1" type="separator"/>
+			<Field id="sceneType" type="menu" defaultValue="rotate-colors">
+				<Label>Scene Type:</Label>
+				<List>
+					<Option value="rotate-colors">Rotate Color/Temp</Option>
+					<Option value="match-colors">Match Color/Temp</Option>
+					<Option value="circadian">Circadian</Option>
+				</List>
+			</Field>
+			<Field id="sceneTypeLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray">
+				<Label>Select from one of the Scene types. Rotate - Bulbs in the group independently rotate through all color/temp settings. Match - Bulbs in the group always match color/temp.</Label>
+			</Field>
+			<Field id="sceneInterval" type="textfield" defaultValue="60">
+				<Label>Scene Interval:</Label>
+			</Field>
+			<Field id="sceneIntervalLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray">
+				<Label>Time in seconds between color/temp changes. For circadian, a higher value is recommeded(i.e. 10min=600secs)</Label>
+			</Field>
+
+			<Field id="simpleSeparator2" type="separator"/>
+			<Field id="settingsSummaryLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>For each setting below, choose between either RGB or White Temperature. If ColorTemp is provided, the RGB values will be ignored. RGB values are 0-255, ColorTemp in Kelvin is 1500-6500, Brightness % 0-100, Transition in milliseconds (1 sec = 1000 millis). If a setting isn't used, just leave empty.</Label>
+			</Field>
+			<Field id="settingFormatLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Values should be formatted as follows: R, G, B, Temp, Brightness, Transition time. Examples below:</Label>
+			</Field>
+			<Field id="rgbExampleLabel" type="label" alignWithControl="true" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>RGB: 175,125,29,0,50,1000</Label>
+			</Field>
+			<Field id="colorTempExampleLabel" type="label" alignWithControl="true" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Color Temp: 255,255,255,3000,75,1000</Label>
+			</Field>
+			<!--
+			<Field id="rgbColor" type="colorpicker" defaultValue="="
+				   tooltip="Click to pick a color.">
+				<Label>Color:</Label>
+				<CallbackMethod>rgbColorPickerUpdated</CallbackMethod>
+			</Field>
+			-->
+			<Field id="setting1Value" type="textfield" defaultValue=""
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Setting 1:</Label>
+			</Field>
+			<Field id="setting2Value" type="textfield" defaultValue=""
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Setting 2:</Label>
+			</Field>
+			<Field id="setting3Value" type="textfield" defaultValue=""
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Setting 3:</Label>
+			</Field>
+			<Field id="setting4Value" type="textfield" defaultValue=""
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Setting 4:</Label>
+			</Field>
+			<Field id="setting5Value" type="textfield" defaultValue=""
+				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
+				<Label>Setting 5:</Label>
+			</Field>
+
+			<Field id="circadianLabel" type="label" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Automatically update color temperature and brightness based on circadian rythym (requires bulbs to support 'White Temperature'). Temperature values are in Kelvin and Brightness values are a percentage. The values form a gradient that increases from sunrise to midday, and decreases at the end of day around sunset. The algorithm will adjust based on a percentage of each interval. The values must be ordered such that: Late Night&lt;Pre-Sunrise&lt;Post-Sunrise&lt;AM Peak&lt;Max, also Max&gt;Pre-Sunset&gt;Post-Sunset&gt;Late Night. </Label>
+			</Field>
+			<Field id="circadianFormatLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Format: Late Night, Pre-Sunrise, Post-Sunrise, AM Peak, Max Temp, Pre-Sunset, Post-Sunset. Examples below:</Label>
+			</Field>
+			<Field id="circadianTempExLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Color Temp(1500K-6500K): 1500,2300,4000,6400,6500,4500,2200</Label>
+			</Field>
+			<Field type="textField" id="CircadianColorTempValues" defaultValue="1500,2300,4000,6400,6500,4500,2200"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Color Temp Values:</Label>
+			</Field>
+			<Field id="circadianBrightnessLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Brightness(1%-100%): 15,35,80,95,100,80,40</Label>
+			</Field>
+			<Field type="textField" id="CircadianBrightnessValues" defaultValue="15,35,80,95,100,80,40"
+				   visibleBindingId="sceneType" visibleBindingValue="circadian">
+				<Label>Brightness Values:</Label>
+			</Field>
+
+			<Field id="simpleSeparator3" type="separator"/>
+			<Field  id="saveButton" type="button" tooltip="This will save the info for this Scene">
+				<Label>Click here to save the settings</Label>
+				<Title>Save Scene</Title>
+				<CallbackMethod>saveScene</CallbackMethod>
+			</Field>
+		</ConfigUI>
+	</MenuItem>
+
+</MenuItems>
