@@ -11,9 +11,9 @@ for communicating with the Lightify Hub. The plugin has NOT been tested with any
 * Device Types - supports 'Groups' ONLY (not individual bulbs)
 * Zigbee Hub - uses an open source tcp library - tested with the Lightify Hub ONLY
 * Scenes - supports creation of customized lighting scenes for the group of lights:
-  * 'Circadian' automatically sets the group of lights based on time of day to match a 'circadian rhythm'
-  * 'Match Colors' for all bulbs in the group to match
-  * 'Rotate Colors' switches each bulb in a group to a different color.
+  * 'Circadian' - automatically sets the group of lights based on time of day to match a 'circadian rhythm'
+  * 'Match Color/Temp' - all bulbs in a group will match the color/temp. Rotates the entire group through each of the different colors specified in the scene
+  * 'Rotate Color/Temp' - each bulb in a group can be a different color. Rotates each bulb through all the different colors specified in the scene
 
 ### Sylvania Required Setup
 
