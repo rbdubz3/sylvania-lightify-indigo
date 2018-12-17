@@ -36,7 +36,8 @@ So far the plugin is ONLY setup to work with a Lightify Group. You can create a 
 
 <img src="/assets/img/group-device-config.png" width="500"/>
 
-* Choose Lightify Group - select from the list of groups configured on the Lightify Hub
+* Choose Lightify Group - select from the list of groups configured on the Lightify Hub. Be sure to setup the groups using
+the Lightify mobile app prior to this step.
 * Supports RGB - select if the devices in the group support RGB. This will also show the RGB color pickers
 * Supports White Temp - select if the devices in the group support tunable white temperature.
 
