@@ -63,7 +63,7 @@ This one is really very cool IMO :). I have several Lightify groups in my house 
 Late night and early morning the lights are dim and yellow/orange-ish. They ramp-up in the morning to be bright and more white/blu-ish.
 Hence if you are concerned about too much blue light at night before bed, this scene has you covered.
 
-<img src="/assets/img/circadian-scene.png" width="400"/>
+<img src="/assets/img/circadian-scene.png" width="600"/>
 
 The values form a gradient that increases from
 sunrise to midday, and decreases at the end of day around sunset. The algorithm will adjust based on a percentage of each
@@ -81,7 +81,7 @@ Examples below:
 Match - Bulbs in the group always match color/temp. The scene allows you to specify a number of different color/temp
 settings - including rgb/temp/brightness and transition time in millis.
 
-<img src="/assets/img/match-colors-scene.png" width="500"/>
+<img src="/assets/img/match-colors-scene.png" width="600"/>
 
 For each setting below, choose between either RGB or White Temperature. If ColorTemp is provided, the RGB values
 will be ignored. RGB values are 0-255, ColorTemp in Kelvin is 1500-6500, Brightness % 0-100,
@@ -125,7 +125,11 @@ As with all plugins, actions defined by this plugin may be executed by Python sc
 
 Plugin ID: com.woodsmachine.indigoplugins.SylvaniaLightify
 
-### Action specific properties
-
 ### Support and Troubleshooting
 For usage or troubleshooting tips discuss this device on our forum.
+
+### Known Issues
+
+---
+#### KeyError: (9518399593889895564L,)
+> A couple of the recent bulbs I've tried generate errors for some of the actions. I believe it is a precision error that I've yet to debug<br/>Sylvania Lightify Error<br/>Error in plugin execution ExecuteAction:<br/><br/>Traceback (most recent call last):<br/>File "plugin.py", line 894, in startScene<br/>KeyError: (9518399593889895564L,)
