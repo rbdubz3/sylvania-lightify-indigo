@@ -27,14 +27,14 @@ So far the plugin is ONLY setup to work with a Lightify Group. You can create a 
 
 ### Plugin Config
 
-<img src="/assets/img/plugin-config.png" width="400"/>
+<img src="/assets/img/plugin-config.png" width="500"/>
 
 * IP address - REQUIRED - this is the IP address as configured in the hub
 * Enable Debugging - set to 'ON' to get debug output.
 
 ### Device Config
 
-<img src="/assets/img/group-device-config.png" width="200"/>
+<img src="/assets/img/group-device-config.png" width="500"/>
 
 * Choose Lightify Group - select from the list of groups configured on the Lightify Hub
 * Supports RGB - select if the devices in the group support RGB. This will also show the RGB color pickers
@@ -46,8 +46,13 @@ The plugin supports creation of custom scenes - Circadian, Match Colors, and Rot
 NOTE: Sylvania Lightify app and hub also supports creation of scenes. The plugin scenes are completely separate
 and don't integrate with the scenes from the Sylvania app.
 
-<img src="/assets/img/scene-config.png" width="400"/>
+<img src="/assets/img/scene-config.png" width="500"/>
 
+* Scene - select from the list of existing scenes
+* Scene Name - update the name of the Scene
+* Scene Type - choose between 'Circadian', 'Rotate Color/Temp', or 'Match Color/Temp'
+* Scene Interval - Time in seconds between color/temp changes. For circadian, a higher value is
+recommeded (i.e. 10min=600secs)
 
 #### Circadian
 
@@ -71,18 +76,29 @@ Examples below:
   * Brightness(1%-100%): 15,35,80,95,100,80,40</Label>
 
 
-#### Match Colors
+#### Match Color/Temp
 
-<img src="/assets/img/match-colors-scene.png"/>
+Match - Bulbs in the group always match color/temp. The scene allows you to specify a number of different color/temp
+settings - including rgb/temp/brightness and transition time in millis.
 
-#### Rotate Colors
+<img src="/assets/img/match-colors-scene.png" width="500"/>
 
-<img src="/assets/img/rotate-colors-scene.png"/>
+For each setting below, choose between either RGB or White Temperature. If ColorTemp is provided, the RGB values
+will be ignored. RGB values are 0-255, ColorTemp in Kelvin is 1500-6500, Brightness % 0-100,
+Transition in milliseconds (1 sec = 1000 millis). If a setting isn't used, just leave empty.
+
+* Format: Values should be formatted as follows: R, G, B, Temp, Brightness, Transition time.
+Examples below:
+  * RGB: 175,125,29,0,50,1000
+  * Color Temp: 255,255,255,3000,75,1000
 
 
-### Actions
-{{:plugins:itunes_actions.png|
+#### Rotate Color/Temp
 
+Rotate Color/Temp - Bulbs in the group independently rotate through all color/temp settings.
+
+Settings are identical to the 'Match Color/Temp' scene. However, the plugin will set each bulb to a different
+color/temp setting and will rotate sequentially.
 
 ### Scripting Support
 As with all plugins, actions defined by this plugin may be executed by Python scripts. Here's the information you need to script the actions in this plugin.
