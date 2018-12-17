@@ -18,8 +18,15 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>http://wiki.indigodomo.com/doku.php?id=indigo_7_documentation:plugins:noaaweather</string>
+			<string>https://github.com/rbdubz3/sylvania-lightify-indigo</string>
 		</dict>
 	</array>
+	<key>GithubInfo</key>
+    <dict>
+        <key>GithubRepo</key>
+        <string>sylvania-lightify-indigo</string>
+        <key>GithubUser</key>
+        <string>rbdubz3</string>
+    </dict>
 </dict>
 </plist>
