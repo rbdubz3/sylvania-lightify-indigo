@@ -34,7 +34,7 @@ So far the plugin is ONLY setup to work with a Lightify Group. You can create a 
 
 ### Device Config
 
-<img src="/assets/img/group-device-config.png"/>
+<img src="/assets/img/group-device-config.png" width="200"/>
 
 * Choose Lightify Group - select from the list of groups configured on the Lightify Hub
 * Supports RGB - select if the devices in the group support RGB. This will also show the RGB color pickers
@@ -46,15 +46,24 @@ The plugin supports creation of custom scenes - Circadian, Match Colors, and Rot
 NOTE: Sylvania Lightify app and hub also supports creation of scenes. The plugin scenes are completely separate
 and don't integrate with the scenes from the Sylvania app.
 
-##### Circadian
+<img src="/assets/img/scene-config.png" width="200"/>
 
-Automatically update color temperature and brightness based on circadian rythym (requires bulbs to support 'White Temperature').
-Temperature values are in Kelvin and Brightness values are a percentage. The values form a gradient that increases from
+
+#### Circadian
+
+Automatically update color temperature and brightness based on circadian rythym - requires bulbs to support 'White Temperature'.
+Temperature values are in Kelvin and Brightness values are a percentage.
+
+This one is really very cool IMO :). I have several Lightify groups in my house and the Circadian scene provides perfect lighting.
+Late night and early morning the lights are dim and yellow/orange-ish. They ramp-up in the morning to be bright and more white/blu-ish.
+Hence if you are concerned about too much blue light at night before bed, this scene has you covered.
+
+<img src="/assets/img/circadian-scene.png" width="200"/>
+
+The values form a gradient that increases from
 sunrise to midday, and decreases at the end of day around sunset. The algorithm will adjust based on a percentage of each
 interval. The values must be ordered such that: Late Night&lt;Pre-Sunrise&lt;Post-Sunrise&lt;AM Peak&lt;Max,
 also Max&gt;Pre-Sunset&gt;Post-Sunset&gt;Late Night.
-
-<img src="/assets/img/circadian-scene.png"/>
 
 * Format: Late Night, Pre-Sunrise, Post-Sunrise, AM Peak, Max Temp, Pre-Sunset, Post-Sunset.
 Examples below:
@@ -62,11 +71,11 @@ Examples below:
   * Brightness(1%-100%): 15,35,80,95,100,80,40</Label>
 
 
-##### Match Colors
+#### Match Colors
 
 <img src="/assets/img/match-colors-scene.png"/>
 
-##### Rotate Colors
+#### Rotate Colors
 
 <img src="/assets/img/rotate-colors-scene.png"/>
 
