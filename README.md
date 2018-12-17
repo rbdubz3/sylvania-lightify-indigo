@@ -92,13 +92,33 @@ Examples below:
   * RGB: 175,125,29,0,50,1000
   * Color Temp: 255,255,255,3000,75,1000
 
-
 #### Rotate Color/Temp
 
 Rotate Color/Temp - Bulbs in the group independently rotate through all color/temp settings.
 
 Settings are identical to the 'Match Color/Temp' scene. However, the plugin will set each bulb to a different
 color/temp setting and will rotate sequentially.
+
+### Plugin Actions
+
+#### Dimmer Type actions
+The plugin extends Indigo 'dimmer type', and as a result can utilize the dimmer device type actions. The plugin
+supports the following:
+* On/Off
+* SetBrightness
+* Set RGB
+* Set Color Temp
+
+NOTE: Some of the dimmer type actions have yet to be implemented - brighten by/dim by
+
+#### Scene Actions
+
+The plugin provides actions to start and stop a scene.
+
+<img src="/assets/img/start-scene.png" width="500"/>
+
+* For 'Start Scene', simply choose the desired scene for your device.
+* When a group is turned off, the scene will automatically be turned off.
 
 ### Scripting Support
 As with all plugins, actions defined by this plugin may be executed by Python scripts. Here's the information you need to script the actions in this plugin.
