@@ -27,7 +27,7 @@ So far the plugin is ONLY setup to work with a Lightify Group. You can create a 
 
 ### Plugin Config
 
-<img src="/assets/img/plugin-config.png"/>
+<img src="/assets/img/plugin-config.png" width="400"/>
 
 * IP address - REQUIRED - this is the IP address as configured in the hub
 * Enable Debugging - set to 'ON' to get debug output.
@@ -46,7 +46,7 @@ The plugin supports creation of custom scenes - Circadian, Match Colors, and Rot
 NOTE: Sylvania Lightify app and hub also supports creation of scenes. The plugin scenes are completely separate
 and don't integrate with the scenes from the Sylvania app.
 
-<img src="/assets/img/scene-config.png" width="200"/>
+<img src="/assets/img/scene-config.png" width="400"/>
 
 
 #### Circadian
@@ -58,7 +58,7 @@ This one is really very cool IMO :). I have several Lightify groups in my house 
 Late night and early morning the lights are dim and yellow/orange-ish. They ramp-up in the morning to be bright and more white/blu-ish.
 Hence if you are concerned about too much blue light at night before bed, this scene has you covered.
 
-<img src="/assets/img/circadian-scene.png" width="200"/>
+<img src="/assets/img/circadian-scene.png" width="400"/>
 
 The values form a gradient that increases from
 sunrise to midday, and decreases at the end of day around sunset. The algorithm will adjust based on a percentage of each
