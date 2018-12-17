@@ -46,18 +46,18 @@
 				<Description>Shows RGB control and level fields in UI</Description>
 			</Field>
 			<Field type="separator" id="simpleSeparator2" />
-			<Field type="checkbox" id="SupportsWhite" defaultValue="true">
+			<Field type="checkbox" id="SupportsWhite" defaultValue="true" hidden="true">
 				<Label>Supports White:</Label>
 				<Description>Shows White level fields in UI</Description>
 			</Field>
-			<Field type="checkbox" id="SupportsTwoWhiteLevels" defaultValue="false" enabledBindingId="SupportsWhite">
+			<Field type="checkbox" id="SupportsTwoWhiteLevels" defaultValue="false" hidden="true" enabledBindingId="SupportsWhite">
 				<Label>Supports White 2:</Label>
 				<Description>Shows Two White level fields in UI</Description>
 			</Field>
-			<Field type="label" id="whiteInfoField" fontColor="darkgray" fontSize="small">
+			<Field type="label" id="whiteInfoField" fontColor="darkgray" fontSize="small" hidden="true">
 				<Label>Two white level fields are used by some hardware to mix cool and warm white levels. Other hardware provides this capability by using a white temperature value. The two techniques are mutually exlcusive, so choosing to enable two white levels will override (and not show) the white temperature UI.</Label>
 			</Field>
-			<Field type="checkbox" id="SupportsWhiteTemperature" defaultValue="false" enabledBindingId="SupportsWhite" visibleBindingId="SupportsTwoWhiteLevels" visibleBindingValue="false" alwaysUseInDialogHeightCalc="true">
+			<Field type="checkbox" id="SupportsWhiteTemperature" defaultValue="true" enabledBindingId="SupportsWhite" visibleBindingId="SupportsTwoWhiteLevels" visibleBindingValue="false" alwaysUseInDialogHeightCalc="true">
 				<Label>Supports White Temp:</Label>
 				<Description>Shows White Temperature field in UI</Description>
 			</Field>
