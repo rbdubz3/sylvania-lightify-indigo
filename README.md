@@ -19,6 +19,18 @@ It is **strongly recommended** to read the [Wiki Documentation][3] to familiaris
 
 **The latest production release is available here: [Plugin Releases][4]**
 
+### Notes on Device Types
+As stated above, the plugin has ONLY been setup to work with Lightify Groups. Several different Lightify Zigbee
+bulbs have been used and work great. However, the plugin currently doesn't validate or check different Lightify bulbs.
+
+To date, the following bulbs below have without issue. Set of product info can be found on the [Sylvania Osram Lightify][2] site:
+* Color RGBW - A19 / BR30 / Indoor Flex Strip / RT 5|6 Recessed Can
+* Tunable/Adjustable White - MR16 / Under Cabinet Light 18"
+
+The Color RGBW bulbs are more expensive, but highly recommended over the tunable/adjustable white ones. The main
+product deficiency with the tunable/adjustable white bulbs is they have a minimum color temp of 2700K. For the 'Circadian'
+scene functionality, it is desirable to go down much lower - closer to 1500K for a nice warm yellow/orange glow
+
 [1]: https://consumer.sylvania.com/our-products/smart/getting-started/
 [2]: https://consumer.sylvania.com/our-products/smart/sylvania-smart-zigbee-products-menu/index.jsp
 [3]: https://github.com/rbdubz3/sylvania-lightify-indigo/wiki
