@@ -19,13 +19,21 @@ It is **strongly recommended** to read the [Wiki Documentation][3] to familiaris
 
 **The latest production release is available here: [Plugin Releases][4]**
 
-### Notes on Device Types
-As stated above, the plugin has ONLY been setup to work with Lightify Groups. Several different Lightify Zigbee
+### Notes on Bulbs and Indigo Device Types
+
+##### Device Types
+As stated above, the plugin has ONLY been setup to work with Lightify Groups. Groups are setup via the Lightify mobile app.
+Support for a single bulb Device Type is TBD. You can still use the plugin with a single bulb however, you just need to
+setup a Lightify Group comprised of the single bulb. Apologies for this seeming lack of functionality - however, I built the
+plugin for use in my house where I'd always done several bulbs combined into a group.
+
+##### Lightify Bulbs
+Several different Lightify Zigbee
 bulbs have been used and work great. However, the plugin currently doesn't validate or check different Lightify bulbs.
 
-To date, the following bulbs below have without issue. Set of product info can be found on the [Sylvania Osram Lightify][2] site:
-* Color RGBW - A19 / BR30 / Indoor Flex Strip / RT 5|6 Recessed Can
-* Tunable/Adjustable White - MR16 / Under Cabinet Light 18"
+To date, the bulb types listed below have without issue. Product info can be found on the [Sylvania Osram Lightify][2] site:
+  * Color RGBW - A19 / BR30 / Indoor Flex Strip / RT 5|6 Recessed Can
+  * Tunable/Adjustable White - MR16 / Under Cabinet Light 18"
 
 The Color RGBW bulbs are more expensive, but highly recommended over the tunable/adjustable white ones. The main
 product deficiency with the tunable/adjustable white bulbs is they have a minimum color temp of 2700K. For the 'Circadian'
