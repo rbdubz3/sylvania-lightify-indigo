@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>PluginVersion</key>
-	<string>1.0.1</string>
+	<string>1.0.2</string>
 	<key>ServerApiVersion</key>
 	<string>2.0</string>
 	<key>IwsApiVersion</key>
@@ -13,12 +13,12 @@
 	<key>CFBundleIdentifier</key>
 	<string>com.woodsmachine.indigoplugins.SylvaniaLightify</string>
 	<key>CFBundleVersion</key>
-	<string>1.0.1</string>
+	<string>1.0.2</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>https://github.com/rbdubz3/sylvania-lightify-indigo</string>
+			<string>https://github.com/rbdubz3/sylvania-lightify-indigo/wiki</string>
 		</dict>
 	</array>
 	<key>GithubInfo</key>
