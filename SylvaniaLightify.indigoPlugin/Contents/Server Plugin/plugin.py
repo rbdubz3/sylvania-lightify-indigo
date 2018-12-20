@@ -41,11 +41,9 @@ class Plugin(indigo.PluginBase):
     def __init__(self, pluginId, pluginDisplayName, pluginVersion, pluginPrefs):
         super(Plugin, self).__init__(pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
         self.debug = pluginPrefs.get("showDebugInfo", False)
-        self.lightifyHubIpAddr = pluginPrefs.get("lightifyHubIpAddr", "127.0.0.1")
-        indigo.server.log("..lightifyHubIpAddr=" + self.lightifyHubIpAddr)
-        self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr)
-        self.lightifyConn.update_all_light_status()
-        self.lightifyConn.update_group_list()
+        self.lightifyHubIpAddr = pluginPrefs.get("lightifyHubIpAddr", "172.16.42.100")
+        #indigo.server.info("..lightifyHubIpAddr=" + self.lightifyHubIpAddr)
+        self.lightifyConn = ""
         self.deviceList = []
         self.deviceThreads = []
         self.lightifyLock = threading.Lock()
@@ -57,10 +55,6 @@ class Plugin(indigo.PluginBase):
         indigo.server.log("Starting device: " + device.name + ", lightifyHubIpAddr=" + self.lightifyHubIpAddr)
         if device.id not in self.deviceList and device.deviceTypeId == 'lightifyGroupType':
             props = device.pluginProps
-            self.debugLog(
-                "Device: id=" + str(device.id) + ",name: " + device.name + ", CircadianColorTempValues=" + props[
-                    "CircadianColorTempValues"] + ", CircadianBrightnessValues=" + props["CircadianBrightnessValues"])
-            # deviceGrpName = device.pluginProps["groupName"]
             # Set SupportsColor property so Indigo knows device accepts color actions and should use color UI.
             if props["SupportsRGB"] == True:
                 # this is a color bulb
@@ -75,13 +69,10 @@ class Plugin(indigo.PluginBase):
             device.updateStateImageOnServer(indigo.kStateImageSel.Auto)
 
             try:
-                #self.debugLog("Updating device id2: " + str(device.id) + ", name: " + device.name)
                 self.update(device)
-                #self.debugLog("Updating device id3: " + str(device.id) + ", name: " + device.name)
                 self.deviceList.append(device.id)
-                #self.debugLog("Updating device id4: " + str(device.id) + ", name: " + device.name)
             except Exception as ex:
-                self.logger.debug("Exception hit in deviceStartComm - " + str(ex))
+                self.errorLog("Exception hit in deviceStartComm - " + str(ex))
 
 
 
@@ -102,6 +93,15 @@ class Plugin(indigo.PluginBase):
     ########################################
     def startup(self):
         indigo.server.log(u"Startup called.")
+        indigo.server.log(u"Initializing Lightify Hub, IP Address=" + self.lightifyHubIpAddr)
+        try:
+            self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr)
+            self.lightifyConn.update_all_light_status()
+            self.lightifyConn.update_group_list()
+        except Exception as ex:
+            self.errorLog("Error initializing Lightify Hub - " + str(ex))
+            self.errorLog("Check IP address in Plugin Configuration.")
+
         # Perform an initial version check.
         self.debugLog(u"Running plugin version check (if enabled).")
         #self.updater.checkVersionPoll()
@@ -1002,20 +1002,16 @@ class Plugin(indigo.PluginBase):
 
     ########################################
     def update(self, device):
-        self.debugLog("Updating device idzz: " + str(device.id) + ", name: " + device.name)
+        self.debugLog("Updating device id: " + str(device.id) + ", name: " + device.name)
         theGroup = self.getLightifyGroup(device)
 
         # refresh the states based on what is found on the first device
         if theGroup is not None:
-            #self.debugLog('...zzA theGroup =' + str(theGroup))
             theLight = None
             for curLight in theGroup.lights():
-                #self.debugLog('...zzB curLight =' + str(curLight))
                 theLight = self.lightifyConn.lights()[curLight]
-                #self.debugLog('...zzC theLight =' + str(theLight))
                 if theLight.on() == 1:
                     break
-                #self.debugLog('...zzD theLight =' + str(theLight))
 
             if theLight is not None:
                 self.debugLog('...theLight =' + str(theLight) + ', on=' + str(theLight.on()))
