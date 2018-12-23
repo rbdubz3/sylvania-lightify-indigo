@@ -42,7 +42,6 @@ class Plugin(indigo.PluginBase):
         super(Plugin, self).__init__(pluginId, pluginDisplayName, pluginVersion, pluginPrefs)
         self.debug = pluginPrefs.get("showDebugInfo", False)
         self.lightifyHubIpAddr = pluginPrefs.get("lightifyHubIpAddr", "172.16.42.100")
-        #indigo.server.info("..lightifyHubIpAddr=" + self.lightifyHubIpAddr)
         self.lightifyConn = ""
         self.deviceList = []
         self.deviceThreads = []
@@ -134,6 +133,10 @@ class Plugin(indigo.PluginBase):
                     sceneData.append('255,00,0,0,90,50')
                     sceneData.append('255,255,0,0,90,50')
                     scene.append(sceneData)
+                    circadianData = list()
+                    circadianData.append('1650,2400,3800,6400,6500,4500,2200')
+                    circadianData.append('10,35,90,95,100,80,40')
+                    scene.append(circadianData)
                 elif aNumber == 2:
                     self.debugLog(u"pluginPrefs lacks scenes.  Adding Halloween.")
                     # Add the scene name.
@@ -146,6 +149,10 @@ class Plugin(indigo.PluginBase):
                     sceneData.append('100,20,0,0,40,100')
                     sceneData.append('100,20,0,0,65,1000')
                     scene.append(sceneData)
+                    circadianData = list()
+                    circadianData.append('1650,2400,3800,6400,6500,4500,2200')
+                    circadianData.append('10,35,90,95,100,80,40')
+                    scene.append(circadianData)
                 elif aNumber == 3:
                     self.debugLog(u"pluginPrefs lacks scenes.  Adding St. Patricks.")
                     scene.append('St. Patricks')
@@ -157,6 +164,10 @@ class Plugin(indigo.PluginBase):
                     sceneData.append('0,179,22,0,80,500')
                     sceneData.append('13,239,33,0,25,500')
                     scene.append(sceneData)
+                    circadianData = list()
+                    circadianData.append('1650,2400,3800,6400,6500,4500,2200')
+                    circadianData.append('10,35,90,95,100,80,40')
+                    scene.append(circadianData)
                 elif aNumber == 4:
                     self.debugLog(u"pluginPrefs lacks scenes.  Adding IndoorCirc.")
                     scene.append('IndoorCirc')
@@ -196,7 +207,6 @@ class Plugin(indigo.PluginBase):
                     circadianData.append('1500,2200,5500,6400,6500,4500,2200')
                     circadianData.append('10,35,90,98,100,80,35')
                     scene.append(circadianData)
-
                 else:
                     # Add the scene name.
                     scene.append('Scene ' + unicode(aNumber))
@@ -534,7 +544,6 @@ class Plugin(indigo.PluginBase):
     ########################################
     #def saveScene(self, action, typeId=""):
     def saveScene(self, valuesDict, typeId):
-        #self.debugLog(u"Starting saveScene. action values:\n" + unicode(action) + "\n")
         self.debugLog(u"Starting saveScene. valuesDict values:\n" + unicode(valuesDict)
                       +  ", typeId:\n" + unicode(typeId))
         errorsDict = indigo.Dict()
@@ -687,21 +696,6 @@ class Plugin(indigo.PluginBase):
                           )
             scenes.append(list((tempSceneName, tempSceneType, tempSceneInterval, tempSceneData, tempCircadianData)))
 
-        # Update the new array with the submitted values.
-        #if actionType == "menu":
-        #    sceneName = action.get('sceneName', False)
-        #    # Return an error if the sceneName is too long.
-        #    if len(sceneName) > 50:
-        #        errorsDict['sceneName'] = u"The Scene Name is too long. Please choose a name that is 50 or fewer characters long."
-        #        errorsDict['showAlertText'] += errorsDict['sceneName']
-        #        return (False, action, errorsDict)
-
-        #else:
-        #    sceneName = action.props.get('sceneName', False)
-
-        #if not sceneName:
-        #    sceneName = ""
-
         # If the submitted name is not blank, change the name in the prefs.
         if sceneName != "":
             # (Index 0 = scene name).
@@ -743,55 +737,10 @@ class Plugin(indigo.PluginBase):
             circadianData = tempCircadianData
 
 
-
-        # Create the states list dict.
-        #for key, value in device.states.iteritems():
-        #    # (Index 1 = preset data).
-        #    presets[presetId][1][key] = value
-
-        # Add the Ramp Rate to the Preset.
-        #if rampRate != -1:	# May still be a sring if passed by embedded script call.
-        #    try:
-        #        rampRate = float(rampRate)
-        #        if (rampRate < 0) or (rampRate > 540):
-        #            errorText = u"Ramp Rate must be a number between 0 and 540 seconds and can be in increments of 0.1 seconds. Value \"" + unicode(rampRate) + u"\" ignored."
-        #            self.errorLog(errorText)
-        #            # Remember the error.
-        #            self.lastErrorMessage = errorText
-        #            rampRate = -1
-        #    except ValueError:
-        #        errorText = u"Ramp Rate must be a number between 0 and 540 seconds and can be in increments of 0.1 seconds. Value \"" + unicode(rampRate) + u"\" ignored."
-        #        self.errorLog(errorText)
-        #        # Remember the error.
-        #        self.lastErrorMessage = errorText
-        #        rampRate = -1
-        #    except Exception, e:
-        #        errorText = u"Invalid Ramp Rate value \"" + unicode(rampRate) + u"\". Error was: " + unicode(e)
-        #        self.errorLog(errorText)
-        #        # Remember the error.
-        #        self.lastErrorMessage = errorText
-        #        rampRate = -1
-        #else:
-        #    # No Ramp Rate submitted. Use -1 to indicate this.
-        #    rampRate = -1
-        ## (Index 2 = ramp rate).
-        #presets[presetId][2] = rampRate
-
         # Save the device's states to the preset.
         self.pluginPrefs['scenes'] = scenes
 
-        # Log the action.
-        #if rampRate == -1:
-        #    indigo.server.log(u"\"" + device.name + u"\" states saved to Preset " + unicode(presetId + 1) + u" (" + presetName + u")")
-        #else:
-        #    indigo.server.log(u"\"" + device.name + u"\" states saved to Preset " + unicode(presetId + 1) + u" (" + presetName + u") with ramp rate " + unicode(rampRate) + u" sec.")
-
-        #indigo.server.log(u"\" states saved to Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") with data " + unicode(sceneData) + u" .")
-        self.debugLog(u"saveScene - states saved to Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") .")
-
-        # Return a tuple if this is a menu item action.
-        #if actionType == "menu":
-        #    return (True, action)
+        indigo.server.log(u"saveScene - states saved to Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") .")
 
 
     def getMenuActionConfigUiValues(self, menuId):
@@ -862,11 +811,11 @@ class Plugin(indigo.PluginBase):
             sceneType = scene[1]
             sceneInterval = int(scene[2])
             sceneData = scene[3]
-            circadianData = scene[4]
-            #dataLen = len(sceneData)
-            self.debugLog("...startScene - group: " + str( indigoDevice.name) + ", scene: " + str(sceneName) +
-                          ", type:" + str(sceneType) + ", interval:" + str(sceneInterval))
+            if sceneType == "circadian" and len(scene) > 4:
+                circadianData = scene[4]
 
+            indigo.server.log("startScene LightifyGroup: " + str(indigoDevice.name) + ", scene: " + str(sceneName) +
+                          ", type:" + str(sceneType) + ", interval:" + str(sceneInterval))
             sceneArray = []
             if sceneType != "circadian":
                 for num in range(0,len(sceneData)):
@@ -920,21 +869,17 @@ class Plugin(indigo.PluginBase):
 
     ### stop the scene
     def stopScene(self, action, device):
-        self.debugLog(u"startScene: device.id: " + unicode(device.id) + u", action:\n" + unicode(action))
+        self.debugLog(u"stopScene: device.id: " + unicode(device.id) + u", action:\n" + unicode(action))
         indigoDevice = indigo.devices[action.deviceId]
         self.debugLog("...stopScene - group device id: " + str(action.deviceId) + ", name: " + indigoDevice.name)
-        theGroup = self.getLightifyGroup(indigoDevice)
-
-        sceneId = int(action.props.get('sceneId', -1))
-        scenes = self.pluginPrefs.get('scenes', None)
 
         indigoDevice = indigo.devices[action.deviceId]
         indigoDevice.updateStateOnServer("activeScene", "None")
         self.updateUIForScene(indigoDevice)
 
         resetTemp = bool(action.props.get('resetTemp', False))
-        self.debugLog("stopScene device id: " + str(
-            indigoDevice.id) + ", name: " + indigoDevice.name + ", resetTemp=" + str(resetTemp))
+
+        indigo.server.log("stopScene LightifyGroup: " + indigoDevice.name + ", device id: " + str(indigoDevice.id))
 
         stoppedThread = self.stopSceneThread(indigoDevice)
         # check to see if we need to reset color/temp/etc if we found and stopped a thread
