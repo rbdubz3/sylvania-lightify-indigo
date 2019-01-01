@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Prefs type="dict">
+	<lightifyHubIpAddr type="string">10.0.1.3</lightifyHubIpAddr>
+	<lightifyHubNote type="string"></lightifyHubNote>
+	<scenes type="vector">
+		<Item type="vector">
+			<Item type="string">Christmas</Item>
+			<Item type="string">rotate-colors</Item>
+			<Item type="string">45</Item>
+			<Item type="vector">
+				<Item type="string">0,0,255,0,90,50</Item>
+				<Item type="string">255,125,0,0,90,50</Item>
+				<Item type="string">0,255,0,0,90,50</Item>
+				<Item type="string">255,00,0,0,90,50</Item>
+				<Item type="string">255,255,0,0,90,50</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Halloween</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">30</Item>
+			<Item type="vector">
+				<Item type="string">40,0,80,0,65,100</Item>
+				<Item type="string">40,0,80,0,40,1000</Item>
+				<Item type="string">100,20,0,0,40,100</Item>
+				<Item type="string">100,20,0,0,65,1000</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">St. Patricks</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+			<Item type="vector">
+				<Item type="string">13,89,1,0,90,500</Item>
+				<Item type="string">0,255,0,0,10,500</Item>
+				<Item type="string">0,179,22,0,80,500</Item>
+				<Item type="string">13,239,33,0,25,500</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">IndoorCirc</Item>
+			<Item type="string">circadian</Item>
+			<Item type="string">600</Item>
+			<Item type="vector">
+				<Item type="string">13,89,1,0,90,500</Item>
+				<Item type="string">0,255,0,0,10,500</Item>
+			</Item>
+			<Item type="vector">
+				<Item type="string">1650,2400,3800,6400,6500,4500,2200</Item>
+				<Item type="string">10,35,90,95,100,80,40</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">OutdoorCirc</Item>
+			<Item type="string">circadian</Item>
+			<Item type="string">600</Item>
+			<Item type="vector">
+				<Item type="string">13,89,1,0,90,500</Item>
+				<Item type="string">0,255,0,0,10,500</Item>
+			</Item>
+			<Item type="vector">
+				<Item type="string">1850,2600,5500,6400,6500,4000,2400</Item>
+				<Item type="string">20,55,80,95,100,85,60</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">MBR Circ</Item>
+			<Item type="string">circadian</Item>
+			<Item type="string">600</Item>
+			<Item type="vector">
+				<Item type="string">13,89,1,0,90,500</Item>
+				<Item type="string">0,255,0,0,10,500</Item>
+			</Item>
+			<Item type="vector">
+				<Item type="string">1500,2200,5500,6400,6500,4500,2200</Item>
+				<Item type="string">10,35,90,98,100,80,35</Item>
+			</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 7</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 8</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 9</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 10</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 11</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 12</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 13</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 14</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 15</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 16</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 17</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 18</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 19</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+		<Item type="vector">
+			<Item type="string">Scene 20</Item>
+			<Item type="string">match-colors</Item>
+			<Item type="string">60</Item>
+		</Item>
+	</scenes>
+	<scenesList type="vector">
+		<Item type="dict">
+			<colorData type="dict">
+				<setting1Value type="string">0,0,255,0,90,50</setting1Value>
+				<setting2Value type="string">255,125,0,0,90,50</setting2Value>
+				<setting3Value type="string">0,255,0,0,90,50</setting3Value>
+				<setting4Value type="string">255,00,0,0,90,50</setting4Value>
+				<setting5Value type="string">255,255,0,0,90,50</setting5Value>
+			</colorData>
+			<sceneInterval type="string">45</sceneInterval>
+			<sceneName type="string">Christmas</sceneName>
+			<sceneType type="string">rotate-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<colorData type="dict">
+				<setting1Value type="string">40,0,80,0,65,100</setting1Value>
+				<setting2Value type="string">40,0,80,0,40,1000</setting2Value>
+				<setting3Value type="string">100,20,0,0,40,100</setting3Value>
+				<setting4Value type="string">100,20,0,0,65,1000</setting4Value>
+			</colorData>
+			<sceneInterval type="string">30</sceneInterval>
+			<sceneName type="string">Halloween</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+				<setting3Value type="string">0,179,22,0,80,500</setting3Value>
+				<setting4Value type="string">13,239,33,0,25,500</setting4Value>
+			</colorData>
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">St. Patricks</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<circadianData type="dict">
+				<CircadianBrightnessValues type="string">10,35,90,95,100,80,40</CircadianBrightnessValues>
+				<CircadianColorTempValues type="string">1650,2400,3800,6400,6500,4500,2200</CircadianColorTempValues>
+			</circadianData>
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+			</colorData>
+			<sceneInterval type="string">600</sceneInterval>
+			<sceneName type="string">IndoorCirc</sceneName>
+			<sceneType type="string">circadian</sceneType>
+		</Item>
+		<Item type="dict">
+			<circadianData type="dict">
+				<CircadianBrightnessValues type="string">20,55,80,95,100,85,60</CircadianBrightnessValues>
+				<CircadianColorTempValues type="string">1850,2600,5500,6400,6500,4000,2400</CircadianColorTempValues>
+			</circadianData>
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+			</colorData>
+			<sceneInterval type="string">600</sceneInterval>
+			<sceneName type="string">OutdoorCirc</sceneName>
+			<sceneType type="string">circadian</sceneType>
+		</Item>
+		<Item type="dict">
+			<circadianData type="dict">
+				<CircadianBrightnessValues type="string">10,35,90,98,100,80,35</CircadianBrightnessValues>
+				<CircadianColorTempValues type="string">1500,2200,5500,6400,6500,4500,2200</CircadianColorTempValues>
+			</circadianData>
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+			</colorData>
+			<sceneInterval type="string">600</sceneInterval>
+			<sceneName type="string">MBR Circ</sceneName>
+			<sceneType type="string">circadian</sceneType>
+		</Item>
+		<Item type="dict">
+			<circadianData type="dict">
+				<CircadianBrightnessValues type="string">20,55,80,95,100,85,60</CircadianBrightnessValues>
+				<CircadianColorTempValues type="string">1850,2600,5500,6400,6500,4000,2400</CircadianColorTempValues>
+			</circadianData>
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+				<setting3Value type="string">43,89,1,0,90,500</setting3Value>
+			</colorData>
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">NutterButter7</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<circadianData type="dict">
+				<CircadianBrightnessValues type="string">20,55,80,95,100,85,60</CircadianBrightnessValues>
+				<CircadianColorTempValues type="string">1850,2600,5500,6400,6500,4000,2400</CircadianColorTempValues>
+			</circadianData>
+			<colorData type="dict">
+				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
+				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
+				<setting3Value type="string">93,89,1,0,90,500</setting3Value>
+			</colorData>
+			<sceneInterval type="string">600</sceneInterval>
+			<sceneName type="string">IamANUT</sceneName>
+			<sceneType type="string">circadian</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 9</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 10</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 11</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 12</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 13</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 14</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 15</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 16</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 17</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 18</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 19</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+		<Item type="dict">
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 20</sceneName>
+			<sceneType type="string">match-colors</sceneType>
+		</Item>
+	</scenesList>
+	<showDebugInfo type="bool">false</showDebugInfo>
+	<topLabel type="string"></topLabel>
+</Prefs>

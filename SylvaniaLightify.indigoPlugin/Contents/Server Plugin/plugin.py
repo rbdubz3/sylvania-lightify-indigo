@@ -102,18 +102,17 @@ class Plugin(indigo.PluginBase):
             self.errorLog("Check IP address in Plugin Configuration.")
 
         # Perform an initial version check.
-        self.debugLog(u"Running plugin version check (if enabled).")
+        #self.debugLog(u"Running plugin version check (if enabled).")
         #self.updater.checkVersionPoll()
 
-        # Prior to version 1.0.0, the "scenes" property did not exist in the plugin preferences.
-        #   If that property does not exist, add it.
-        # As of version 1.0.0, there are now 30 scenes instead of 10.
-        if not self.pluginPrefs.get('scenes', False):
+        if 'scenes' in self.pluginPrefs:
+            scenes = self.pluginPrefs['scenes']
+        else:
+            scenes = list()
+
+        if not self.pluginPrefs.get('scenes', False) and not self.pluginPrefs.get('scenesList', False):
             indigo.server.log(u"pluginPrefs lacks scenes.  Adding.")
             # Add the empty scenes list to the prefs.
-            self.pluginPrefs['scenes'] = list()
-            # Start a new list of empty scenes.
-            scenes = list()
             for aNumber in range(1,21):
                 # Create a blank sub-list for storing scene name and scene states.
                 scene = list()
@@ -216,8 +215,47 @@ class Plugin(indigo.PluginBase):
             # Add the new list of empty scenes to the prefs.
             self.pluginPrefs['scenes'] = scenes
             self.debugLog(u"pluginPrefs now contains 20 scenes.")
-        # If scenes exist, make sure there are 30 of them.
 
+        # If scenes exist, make sure there are 20 of them.
+        if not self.pluginPrefs.get('scenesList', False):
+            indigo.server.log(u"pluginPrefs lacks scenesList.  Adding.")
+            # fill in the dictionary instead of the list
+            self.pluginPrefs['scenesList'] = list()
+            # Start a new list of empty scenes.
+            scenesList = list()
+
+            for theScene in scenes:
+                sceneDict = dict()
+                # Add the sub-list to the empty scenes list.
+                scenesList.append(sceneDict)
+                sceneDict['sceneName'] = theScene[0]
+                sceneDict['sceneType'] = theScene[1]
+                sceneDict['sceneInterval'] = theScene[2]
+                if len(theScene) > 3:
+                    colorDict = dict()
+                    sceneDict['colorData'] = colorDict
+                    settingNum = 1
+                    for thesetting in theScene[3]:
+                        key = 'setting' + str(settingNum) + 'Value'
+                        colorDict[key] = thesetting
+                        settingNum = settingNum + 1
+
+                if len(theScene) > 4:
+                    circadianDict = dict()
+                    sceneDict['circadianData'] = circadianDict
+                    circadianDict['CircadianColorTempValues'] = theScene[4][0]
+                    circadianDict['CircadianBrightnessValues'] = theScene[4][1]
+
+                self.debugLog(u"adding to scenesList. Scene name: " + str(sceneDict['sceneName']))
+
+
+            # Add the new list of empty scenes to the prefs.
+            self.pluginPrefs['scenesList'] = scenesList
+
+        # after creating the scenesList, we can remove the old scenes
+        if 'scenes' in self.pluginPrefs:
+            self.debugLog(u"removing old 'scenes' from pluginPrefs.")
+            del self.pluginPrefs['scenes']
 
 
     ########################################
@@ -253,11 +291,12 @@ class Plugin(indigo.PluginBase):
                                     theLight = self.lightifyConn.lights()[curLight]
                                     if theLight is not None:
                                         self.debugLog('...groupLight =' + str(theLight) + ', on=' + str(theLight.on()))
-                                        if grpOnOffState is False and theLight.on() is 1 and 'Media' not in theDevice.name:
+                                        if grpOnOffState is False and theLight.on() is 1:
                                             theLight.set_onoff(0)
                                             self.lightifyConn.update_light_status(theLight)
                                             newLight = self.lightifyConn.light_byname(theLight.name())
-                                            self.debugLog('...ATTEMPTED to turnoff light. Updated status =' + str(newLight) + ', on=' + str(newLight.on()))
+                                            indigo.server.log('runConcurrentThread - ATTEMPTED to turn off bulb - out of sync with group: ' +
+                                                          str(theDevice.name) + ', updated status =' + str(newLight) + ', on=' + str(newLight.on()))
                             self.lastRefreshTime = datetime.datetime.now()
 
                             # lets also output all of the threads in action
@@ -386,22 +425,6 @@ class Plugin(indigo.PluginBase):
             returnGroupList.append([theGroup, theGroup])
             groupId = groupId + 1
 
-        # Iterate over our bulbs, and return the available list in Indigo's format
-        #for bulbId, bulbDetails in self.lightsDict.items():
-        #    if typeId == "":
-        #        # If no typeId exists, list all devices.
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-        #    elif typeId == "hueBulb" and bulbDetails['modelid'] in kHueBulbDeviceIDs:
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-        #    elif typeId == "hueAmbiance" and bulbDetails['modelid'] in kAmbianceDeviceIDs:
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-        #    elif typeId == "hueLightStrips" and bulbDetails['modelid'] in kLightStripsDeviceIDs:
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-        #    elif typeId == "hueLivingColorsBloom" and bulbDetails['modelid'] in kLivingColorsDeviceIDs:
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-        #    elif typeId == "hueLivingWhites" and bulbDetails['modelid'] in kLivingWhitesDeviceIDs:
-        #        returnBulbList.append([bulbId, bulbDetails['name']])
-
         # Debug
         self.debugLog(u"groupListGenerator: Return bulb list is %s" % returnGroupList)
 
@@ -418,21 +441,22 @@ class Plugin(indigo.PluginBase):
 
         theList = list()	# Menu item list.
 
-        scenes = self.pluginPrefs.get('scenes', None)
-        self.debugLog(u"sceneListGenerator: Scenes in plugin prefs:\n" + unicode(scenes))
+        scenesList = self.pluginPrefs.get('scenesList', None)
+        self.debugLog(u"sceneListGenerator: Scenes in plugin prefs:\n" + unicode(scenesList))
 
-        if scenes != None:
+        if scenesList != None:
             sceneNumber = 0
 
-            for scene in scenes:
+            for sceneDict in scenesList:
                 # Determine whether the Scene has saved data or not.
                 hasData = ""
-                self.debugLog('scene ' + scene[0] + ', length is - ' + str(len(scene)))
-                if len(scene) > 3:
+                sceneName = sceneDict['sceneName']
+                self.debugLog('scene ' + sceneName)
+                if 'colorData' in sceneDict.keys() or 'circadianData' in sceneDict.keys():
+                    self.debugLog("sceneListGenerator: scene " + sceneName + ", hasData=True")
                     hasData = "*"
 
                 sceneNumber += 1
-                sceneName = scene[0]
                 theList.append((sceneNumber, hasData + unicode(sceneNumber) + ": " + sceneName))
         else:
             theList.append((0, "-- no scenes --"))
@@ -449,21 +473,20 @@ class Plugin(indigo.PluginBase):
 
         theList = list()	# Menu item list.
 
-        scenes = self.pluginPrefs.get('scenes', None)
-        #self.debugLog(u"activeSceneListGenerator: Scenes in plugin prefs:\n" + unicode(scenes))
-
-        if scenes != None:
+        scenesList = self.pluginPrefs.get('scenesList', None)
+        if scenesList != None:
             sceneNumber = 0
 
-            for scene in scenes:
+            for sceneDict in scenesList:
                 # Determine whether the Scene has saved data or not.
                 hasData = False
-                if len(scene) > 3:
+                sceneName = sceneDict['sceneName']
+                if 'colorData' in sceneDict.keys() or 'circadianData' in sceneDict.keys():
+                    self.debugLog("activeSceneListGenerator: scene " + sceneName + ", hasData=True")
                     hasData = True
 
                 sceneNumber += 1
                 if hasData is True:
-                    sceneName = scene[0]
                     theList.append((sceneNumber, unicode(sceneNumber) + ": " + sceneName))
         else:
             theList.append((0, "-- no scenes --"))
@@ -481,88 +504,66 @@ class Plugin(indigo.PluginBase):
         sceneId = int(valuesDict['sceneId'])
         self.debugLog(u".. sceneId-" + self.sceneListSelection)
 
-        theScene = self.pluginPrefs['scenes'][sceneId-1]
+        sceneDict = self.pluginPrefs['scenesList'][sceneId-1]
 
-        valuesDict['sceneName'] = theScene[0]
-        valuesDict['sceneType'] = theScene[1]
-        valuesDict['sceneInterval'] = theScene[2]
-        dataLen = 0
-        sceneData = ''
-        if len(theScene) > 3:
-            sceneData = theScene[3]
-            dataLen = len(sceneData)
+        valuesDict['sceneName'] = sceneDict['sceneName']
+        valuesDict['sceneType'] = sceneDict['sceneType']
+        valuesDict['sceneInterval'] = sceneDict['sceneInterval']
 
-        if dataLen >= 1:
-            valuesDict['setting1Value'] = sceneData[0]
-        else:
-            valuesDict['setting1Value'] = "255,128,128,0,50,100"
-        if dataLen >= 2:
-            valuesDict['setting2Value'] = sceneData[1]
-        else:
-            valuesDict['setting2Value'] = "128,255,255,0,75,100"
-        if dataLen >= 3:
-            valuesDict['setting3Value'] = sceneData[2]
-        else:
-            valuesDict['setting3Value'] = ""
-        if dataLen >= 4:
-            valuesDict['setting4Value'] = sceneData[3]
-        else:
-            valuesDict['setting4Value'] = ""
-        if dataLen >= 5:
-            valuesDict['setting5Value'] = sceneData[4]
-        else:
-            valuesDict['setting5Value'] = ""
+        if 'colorData' in sceneDict.keys():
+            colorDict = sceneDict['colorData']
 
-        circLen = 0
-        circadianData = ''
-        if len(theScene) > 4:
-            circadianData = theScene[4]
-            circLen = len(circadianData)
+            if 'setting1Value' in colorDict.keys():
+                valuesDict['setting1Value'] = colorDict['setting1Value']
+            else:
+                valuesDict['setting1Value'] = "255,128,128,0,50,100"
+            if 'setting2Value' in colorDict.keys():
+                valuesDict['setting2Value'] = colorDict['setting2Value']
+            else:
+                valuesDict['setting2Value'] = "128,255,255,0,75,100"
+            if 'setting3Value' in colorDict.keys():
+                valuesDict['setting3Value'] = colorDict['setting3Value']
+            else:
+                valuesDict['setting3Value'] = ""
+            if 'setting4Value' in colorDict.keys():
+                valuesDict['setting4Value'] = colorDict['setting4Value']
+            else:
+                valuesDict['setting4Value'] = ""
+            if 'setting5Value' in colorDict.keys():
+                valuesDict['setting5Value'] = colorDict['setting5Value']
+            else:
+                valuesDict['setting5Value'] = ""
 
-        if circLen >= 1:
-            valuesDict['CircadianColorTempValues'] = circadianData[0]
-        else:
-            valuesDict['CircadianColorTempValues'] = "1500,2300,4000,6400,6500,4500,2200"
-        if circLen >= 2:
-            valuesDict['CircadianBrightnessValues'] = circadianData[1]
-        else:
-            valuesDict['CircadianBrightnessValues'] = "15,35,80,95,100,80,40"
+        if 'circadianData' in sceneDict.keys():
+            circDict = sceneDict['circadianData']
 
+            if 'CircadianColorTempValues' in circDict.keys():
+                valuesDict['CircadianColorTempValues'] = circDict['CircadianColorTempValues']
+            else:
+                valuesDict['CircadianColorTempValues'] = "1500,2300,4000,6400,6500,4500,2200"
+            if 'CircadianBrightnessValues' in circDict.keys():
+                valuesDict['CircadianBrightnessValues'] = circDict['CircadianBrightnessValues']
+            else:
+                valuesDict['CircadianBrightnessValues'] = "15,35,80,95,100,80,40"
 
         self.debugLog(u"... selected sceneId: " + unicode(sceneId)
-                      + u", sceneName: " + unicode(theScene[0]) + u", sceneType: " + unicode(theScene[1])
-                      + u", sceneInterval: " + unicode(theScene[2]))
-        if dataLen > 0:
-            self.debugLog(u"... sceneData:+ u" + unicode(theScene[3]))
-        if circLen > 0:
-            self.debugLog(u"... circadianData:+ u" + unicode(theScene[4]))
+                      + u", sceneName: " + unicode(sceneDict['sceneName']) + u", sceneType: " + unicode(sceneDict['sceneType'])
+                      + u", sceneInterval: " + unicode(sceneDict['sceneInterval']))
+        if 'colorData' in sceneDict.keys():
+            self.debugLog(u"... colorData:+ u" + unicode(sceneDict['colorData']))
+        if 'circadianData' in sceneDict.keys():
+            self.debugLog(u"... circadianData:+ u" + unicode(sceneDict['circadianData']))
 
         return valuesDict
 
 
     # Save Scene Action
     ########################################
-    #def saveScene(self, action, typeId=""):
     def saveScene(self, valuesDict, typeId):
         self.debugLog(u"Starting saveScene. valuesDict values:\n" + unicode(valuesDict)
                       +  ", typeId:\n" + unicode(typeId))
         errorsDict = indigo.Dict()
         errorsDict['showAlertText'] = u""
-        actionType = "action"
-        ## Work with both Menu and Action actions.
-        #try:
-        #    actionType = "menu"
-        #except AttributeError:
-        #    # This is an action, not a menu call.
-        #    pass
-
-        # Get the sceneId.
-        #if actionType == "menu":
-        #    sceneId = action.get('sceneId', False)
-        #else:
-        #    sceneId = action.props.get('sceneId', False)
-        # 124,16,173,0,50,1000
-        # 255,255,255,1600,50,1000
 
         sceneId = valuesDict['sceneId']
         sceneName = valuesDict['sceneName']
@@ -585,31 +586,6 @@ class Plugin(indigo.PluginBase):
             sceneId = int(sceneId)
             # Subtract 1 because key values are 0-based.
             sceneId -= 1
-
-        # build the list of data from the UI
-        sceneData = list()
-
-        #if not valuesDict['setting1Value']:
-        #    #errorText = u"No Setting1 specified."
-            #self.errorLog(errorText)
-            # Remember the error.
-            #self.lastErrorMessage = errorText
-            #return False
-        #    errorsDict['setting1Value'] =  u"No Setting1 specified."
-        #    errorsDict['showAlertText'] += errorsDict['setting1Value']
-        #    return valuesDict, errorsDict
-        #else:
-            # need to validate
-        #    sceneData.append(valuesDict['setting1Value'])
-
-        #if not valuesDict['setting3Value']:
-            # Remember the error.
-        #    errorsDict['setting3Value'] =  u"No Setting3 specified."
-        #    errorsDict['showAlertText'] += errorsDict['setting3Value']
-        #    errorText = u"No Setting3 specified."
-        #    self.errorLog(errorText)
-        #    #self.lastErrorMessage = errorText
-        #    return valuesDict, errorsDict
 
         self.debugLog(u"saveScene - starting Validation for Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") .")
         returnVal = True
@@ -654,93 +630,64 @@ class Plugin(indigo.PluginBase):
 
         self.debugLog(u"saveScene - finished Validation for Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") .")
 
+        colorDict = dict()
         if valuesDict['setting1Value']:
-            sceneData.append(valuesDict['setting1Value'])
+            colorDict['setting1Value'] = valuesDict['setting1Value']
         if valuesDict['setting2Value']:
-            sceneData.append(valuesDict['setting2Value'])
+            colorDict['setting2Value'] = valuesDict['setting2Value']
         if valuesDict['setting3Value']:
-            sceneData.append(valuesDict['setting3Value'])
+            colorDict['setting3Value'] = valuesDict['setting3Value']
         if valuesDict['setting4Value']:
-            sceneData.append(valuesDict['setting4Value'])
+            colorDict['setting4Value'] = valuesDict['setting4Value']
         if valuesDict['setting5Value']:
-            sceneData.append(valuesDict['setting5Value'])
+            colorDict['setting5Value'] = valuesDict['setting5Value']
 
-        circadianData = list()
+        circDict = dict()
         if valuesDict['CircadianColorTempValues']:
-            circadianData.append(valuesDict['CircadianColorTempValues'])
+            circDict['CircadianColorTempValues'] = valuesDict['CircadianColorTempValues']
         if valuesDict['CircadianBrightnessValues']:
-            circadianData.append(valuesDict['CircadianBrightnessValues'])
+            circDict['CircadianBrightnessValues'] = valuesDict['CircadianBrightnessValues']
 
-        # Get the plugin prefs and populate them into a local array.
-        scenes = list()
-        for num in range(0,len(self.pluginPrefs['scenes'])):
-            self.debugLog(u"Checking existing sceneData. sceneId:" + unicode(num)
-                          +  ", data:" + unicode(self.pluginPrefs['scenes'][num]))
-            tempSceneName = self.pluginPrefs['scenes'][num][0]
-            tempSceneType = self.pluginPrefs['scenes'][num][1]
-            tempSceneInterval = self.pluginPrefs['scenes'][num][2]
-            if len(self.pluginPrefs['scenes'][num]) > 3:
-                tempSceneData = self.pluginPrefs['scenes'][num][3]
-            else:
-                tempSceneData = ""
-            if len(self.pluginPrefs['scenes'][num]) > 4:
-                tempCircadianData = self.pluginPrefs['scenes'][num][4]
-            else:
-                tempCircadianData = ""
-            self.debugLog(u"Checking existing sceneData. sceneId:" + unicode(num)
-                          +  ", name:" + unicode(tempSceneName)
-                          +  ", type:" + unicode(tempSceneType)
-                          +  ", interval:" + unicode(tempSceneInterval)
-                          +  ", sceneData:" + unicode(tempSceneData)
-                          +  ", circadianData:" + unicode(tempCircadianData)
-                          )
-            scenes.append(list((tempSceneName, tempSceneType, tempSceneInterval, tempSceneData, tempCircadianData)))
+        newSceneDict = dict()
+        newSceneDict['sceneName'] = sceneName
+        newSceneDict['sceneType'] = sceneType
+        newSceneDict['sceneInterval'] = sceneInterval
+        if len(colorDict) > 0:
+            newSceneDict['colorData'] = colorDict
+        if len(circDict) > 0:
+            newSceneDict['circadianData'] = circDict
 
-        # If the submitted name is not blank, change the name in the prefs.
-        if sceneName != "":
-            # (Index 0 = scene name).
-            scenes[sceneId][0] = sceneName
-        else:
-            # Submitted sceneName is blank. Use the current one for logging.
-            sceneName = scenes[sceneId][0]
+        self.debugLog(u"saveScene - adding newSceneDict=" + str(newSceneDict))
 
-        # If the submitted type is not blank, change the one in the prefs.
-        if sceneType != "":
-            # (Index 1 = scene type).
-            scenes[sceneId][1] = sceneType
-        else:
-            # Submitted type is blank. Use the current one for logging.
-            sceneType = scenes[sceneId][1]
+        scenesList = self.pluginPrefs['scenesList']
 
-        # If the submitted interval is not blank, change the one in the prefs.
-        if sceneInterval != "":
-            # (Index 2 = scene interval).
-            scenes[sceneId][2] = sceneInterval
-        else:
-            # Submitted sceneInterval is blank. Use the current one for logging.
-            sceneInterval = scenes[sceneId][2]
+        newScenesList = list()
+        for aNumber in range(0,20):
+            aDict = dict()
+            newScenesList.append(aDict)
+            aDict['sceneName'] = scenesList[aNumber]['sceneName']
+            aDict['sceneType'] = scenesList[aNumber]['sceneType']
+            aDict['sceneInterval'] = scenesList[aNumber]['sceneInterval']
+            if 'colorData' in scenesList[aNumber].keys():
+                aDict['colorData'] = scenesList[aNumber]['colorData']
+            if 'circadianData' in scenesList[aNumber].keys():
+                aDict['circadianData'] = scenesList[aNumber]['circadianData']
 
-        # If the submitted data is not blank, change the one in the prefs.
-        if sceneData != "":
-            # (Index 3 = scene data).
-            scenes[sceneId][3] = sceneData
-        else:
-            # Submitted sceneData is blank. Use the current one for logging.
-            sceneData = tempSceneData
+            if aNumber == sceneId:
+                aDict['sceneName'] = newSceneDict['sceneName']
+                aDict['sceneType'] = newSceneDict['sceneType']
+                aDict['sceneInterval'] = newSceneDict['sceneInterval']
+                if len(colorDict) > 0:
+                    aDict['colorData'] = colorDict
+                if len(circDict) > 0:
+                    aDict['circadianData'] = circDict
 
-        # If the submitted circadian data is not blank, change the one in the prefs.
-        if circadianData != "":
-            # (Index 4 = circadian data).
-            scenes[sceneId][4] = circadianData
-        else:
-            # Submitted sceneData is blank. Use the current one for logging.
-            circadianData = tempCircadianData
-
+                self.debugLog(u"saveScene - finished adding NEW, sceneDict=" + str(aDict))
 
         # Save the device's states to the preset.
-        self.pluginPrefs['scenes'] = scenes
+        self.pluginPrefs['scenesList'] = newScenesList
 
-        indigo.server.log(u"saveScene - states saved to Scene " + unicode(sceneId + 1) + u" (" + sceneName + u") .")
+        indigo.server.log(u"saveScene - states saved to Scene " + unicode(sceneId + 1) + u" (" + sceneName + u")")
 
 
     def getMenuActionConfigUiValues(self, menuId):
@@ -748,49 +695,62 @@ class Plugin(indigo.PluginBase):
         errorMsgDict = indigo.Dict()
 
         if menuId == "saveScene":
-            scenes = self.pluginPrefs.get('scenes', None)
+            scenesList = self.pluginPrefs.get('scenesList', None)
             self.debugLog(u"getMenuActionConfigUiValues: get initial value for saveScene dialog.")
 
             theScene = None
 
-            if scenes != None:
+            if scenesList != None:
                 sceneNumber = 0
 
-                for scene in scenes:
+                for sceneDict in scenesList:
                     # Determine whether the Scene has saved data or not.
-                    if len(scenes[sceneNumber][1]) > 0:
+                    if 'colorData' in sceneDict.keys() or 'circadianData' in sceneDict.keys():
                         if sceneNumber is 0:
-                            theScene = scene
+                            theScene = sceneDict
                     sceneNumber += 1
 
             if theScene is not None:
                 self.debugLog(u"...getMenuActionConfigUiValues: loading data for scene0:\n" + unicode(theScene))
 
-                valuesDict['sceneName'] = theScene[0]
-                valuesDict['sceneType'] = theScene[1]
-                valuesDict['sceneInterval'] = theScene[2]
-                sceneData = theScene[3]
-                dataLen = len(sceneData)
-                if dataLen >= 1:
-                    valuesDict['setting1Value'] = sceneData[0]
-                else:
-                    valuesDict['setting1Value'] = ""
-                if dataLen >= 2:
-                    valuesDict['setting2Value'] = sceneData[1]
-                else:
-                    valuesDict['setting2Value'] = ""
-                if dataLen >= 3:
-                    valuesDict['setting3Value'] = sceneData[2]
-                else:
-                    valuesDict['setting3Value'] = ""
-                if dataLen >= 4:
-                    valuesDict['setting4Value'] = sceneData[3]
-                else:
-                    valuesDict['setting4Value'] = ""
-                if dataLen >= 5:
-                    valuesDict['setting5Value'] = sceneData[4]
-                else:
-                    valuesDict['setting5Value'] = ""
+                valuesDict['sceneName'] = theScene['sceneName']
+                valuesDict['sceneType'] = theScene['sceneType']
+                valuesDict['sceneInterval'] = theScene['sceneInterval']
+                if 'colorData' in theScene.keys():
+                    colorData = theScene['colorData']
+                    if colorData is not None:
+                        if 'setting1Value' in colorData.keys():
+                            valuesDict['setting1Value'] = colorData['setting1Value']
+                        else:
+                            valuesDict['setting1Value'] = ""
+                        if 'setting2Value' in colorData.keys():
+                            valuesDict['setting2Value'] = colorData['setting2Value']
+                        else:
+                            valuesDict['setting2Value'] = ""
+                        if 'setting3Value' in colorData.keys():
+                            valuesDict['setting3Value'] = colorData['setting3Value']
+                        else:
+                            valuesDict['setting3Value'] = ""
+                        if 'setting4Value' in colorData.keys():
+                            valuesDict['setting4Value'] = colorData['setting4Value']
+                        else:
+                            valuesDict['setting4Value'] = ""
+                        if 'setting5Value' in colorData.keys():
+                            valuesDict['setting5Value'] = colorData['setting5Value']
+                        else:
+                            valuesDict['setting5Value'] = ""
+
+                if 'circadianData' in theScene.keys():
+                    circData = theScene['circadianData']
+                    if circData is not None:
+                        if 'CircadianColorTempValues' in circData.keys():
+                            valuesDict['CircadianColorTempValues'] = circData['CircadianColorTempValues']
+                        else:
+                            valuesDict['CircadianColorTempValues'] = ""
+                        if 'CircadianBrightnessValues' in circData.keys():
+                            valuesDict['CircadianBrightnessValues'] = circData['CircadianBrightnessValues']
+                        else:
+                            valuesDict['CircadianBrightnessValues'] = ""
 
         return (valuesDict, errorMsgDict)
 
@@ -802,39 +762,41 @@ class Plugin(indigo.PluginBase):
         theGroup = self.getLightifyGroup(indigoDevice)
 
         sceneId = int(action.props.get('sceneId', -1))
-        scenes = self.pluginPrefs.get('scenes', None)
+        scenesList = self.pluginPrefs.get('scenesList', None)
 
-        if scenes is not None and sceneId != -1 and theGroup is not None:
-            scene = scenes[sceneId-1]
-            self.debugLog("...startScene - group: " + str(indigoDevice.name) + ", scene: " + str(scene))
-            sceneName = scene[0]
-            sceneType = scene[1]
-            sceneInterval = int(scene[2])
-            sceneData = scene[3]
-            if sceneType == "circadian" and len(scene) > 4:
-                circadianData = scene[4]
+        if scenesList is not None and sceneId != -1 and theGroup is not None:
+            sceneDict = scenesList[sceneId-1]
+            self.debugLog("...startScene - group: " + str(indigoDevice.name) + ", scene: " + str(sceneDict))
+            sceneName = sceneDict['sceneName']
+            sceneType = sceneDict['sceneType']
+            sceneInterval = int(sceneDict['sceneInterval'])
+            if 'colorData' in sceneDict.keys():
+                colorData = sceneDict['colorData']
+            if 'circadianData' in sceneDict.keys():
+                circadianData = sceneDict['circadianData']
 
             indigo.server.log("startScene LightifyGroup: " + str(indigoDevice.name) + ", scene: " + str(sceneName) +
                           ", type:" + str(sceneType) + ", interval:" + str(sceneInterval))
+
             sceneArray = []
             if sceneType != "circadian":
-                for num in range(0,len(sceneData)):
-                    self.debugLog("...num=" + str(num) + ", data=" + str(sceneData[num]))
-
-                    tempArray = sceneData[num].split(",")
-                    redVal = int(tempArray[0])
-                    greenVal = int(tempArray[1])
-                    blueVal = int(tempArray[2])
-                    colorTemp = int(tempArray[3])
-                    brightness = int(tempArray[4])
-                    transMilli = int(tempArray[5])
-                    sceneArray.append([redVal, greenVal, blueVal, colorTemp, brightness, transMilli])
+                for settingNum in range(1,6):
+                    key = 'setting' + str(settingNum) + 'Value'
+                    if key in colorData.keys():
+                        thesetting = colorData[key]
+                        self.debugLog("...settingNum=" + str(settingNum) + ", data=" + str(thesetting))
+                        tempArray = thesetting.split(",")
+                        redVal = int(tempArray[0])
+                        greenVal = int(tempArray[1])
+                        blueVal = int(tempArray[2])
+                        colorTemp = int(tempArray[3])
+                        brightness = int(tempArray[4])
+                        transMilli = int(tempArray[5])
+                        sceneArray.append([redVal, greenVal, blueVal, colorTemp, brightness, transMilli])
             else:
                 if len(circadianData) == 2:
-                    self.debugLog("...circadian temp=" + str(circadianData[0]))
-                    self.debugLog("...circadian brightness=" + str(circadianData[1]))
-                    sceneArray.append(circadianData[0])
-                    sceneArray.append(circadianData[1])
+                    sceneArray.append(circadianData['CircadianColorTempValues'])
+                    sceneArray.append(circadianData['CircadianBrightnessValues'])
 
             if theGroup is not None and len(sceneArray) != 0:
                 lightArray = []
@@ -1112,19 +1074,6 @@ class Plugin(indigo.PluginBase):
 
         return True, valuesDict, errorsDict
 
-    ######################################################################################
-    # Validations for Plugin Prefs
-    #def validatePrefsConfigUi(self, valuesDict):
-    #    self.debugLog(u"Vaidating Plugin Configuration")
-    #    errorsDict = indigo.Dict()
-    #    # if valuesDict[u"rootZPIP"] == "":
-    #    #        errorsDict[u"rootZPIP"] = u"Please enter a reference ZonePlayer IP Address."
-    #    if len(errorsDict) > 0:
-    #        self.errorLog(u"\t Validation Errors")
-    #        return (False, valuesDict, errorsDict)
-    #    else:
-    #        self.debugLog(u"\t Validation Succesful")
-    #        return (True, valuesDict)
 
     ########################################
     # Menu Methods
@@ -1143,20 +1092,13 @@ class Plugin(indigo.PluginBase):
     ########################################
     def updateUIForScene(self, dev):
         indigoDevice = indigo.devices[dev.id]
+
+        # initialize state from Lightify Group
         brightness = indigoDevice.states['brightnessLevel']
         activeScene = indigoDevice.states['activeScene'].strip()
-        self.debugLog("updateUIForScene device name=" + dev.name + ",activeScene=" + activeScene +
-                          ",brightness=" + str(brightness))
-
-        activeSceneType = None
-        for num in range(0,len(self.pluginPrefs['scenes'])):
-            sceneName = self.pluginPrefs['scenes'][num][0]
-            sceneType = self.pluginPrefs['scenes'][num][1]
-            if sceneName.strip() == activeScene:
-                activeSceneType = sceneType
-                break
-
-        whiteTemp = "2700"
+        if activeScene == "":
+            activeScene = None
+        whiteTemp = "0"
         redLevel = "0"
         greenLevel = "0"
         blueLevel = "0"
@@ -1167,28 +1109,29 @@ class Plugin(indigo.PluginBase):
             redLevel = indigoDevice.states['redLevel.ui']
             greenLevel = indigoDevice.states['greenLevel.ui']
             blueLevel = indigoDevice.states['blueLevel.ui']
+        self.debugLog("updateUIForScene device state: name=" + dev.name + ", activeScene=" + activeScene +
+                      ", brightness=" + str(brightness) + ", temp=" + whiteTemp + ", red=" + redLevel +
+                      ", green=" + greenLevel + ", blue=" + blueLevel)
 
         if str(brightness) != "0" and whiteTemp != "0":
-            stateStr = str(brightness) + "/" + str(whiteTemp) + "K"
             if activeScene is not None and activeScene != "None":
+                stateStr = str(brightness) + "/" + str(whiteTemp) + "K"
                 indigoDevice.updateStateOnServer("brightnessLevel", value=brightness,
                                              uiValue=activeScene.ljust(5) + stateStr.rjust(10))
             else:
+                stateStr = str(brightness) + " / " + str(whiteTemp) + "K"
                 indigoDevice.updateStateOnServer("brightnessLevel", value=brightness,
                                                  uiValue=stateStr)
-
-        elif str(brightness) != "0" and (redLevel != "0" or greenLevel != "0" or blueLevel != "0"):
-            #rgbStr = '#%02x%02x%02x' % (int(redLevel), int(greenLevel), int(blueLevel))
-            #stateStr = str(brightness) + "/" + redLevel + "-" + greenLevel + "-" + blueLevel
-            #stateStr = str(brightness) + "/" + rgbStr
+        elif str(brightness) != "0" and whiteTemp == "0":
             stateStr = str(brightness)
             if activeScene is not None and activeScene != "None":
                 indigoDevice.updateStateOnServer("brightnessLevel", value=brightness,
                                                  uiValue=activeScene.ljust(5) + stateStr.rjust(10))
             else:
+                rgbStr = '%02x%02x%02x' % (int(redLevel), int(greenLevel), int(blueLevel))
+                stateStr = str(brightness) + " / #" + rgbStr.upper()
                 indigoDevice.updateStateOnServer("brightnessLevel", value=brightness,
                                                  uiValue=stateStr)
-
         else:
             indigoDevice.updateStateOnServer("brightnessLevel", value=brightness,
                                              uiValue=str(brightness))
@@ -1572,11 +1515,11 @@ class RgbRotateSceneThread(LightifySceneThread):
                         self.lightifyQueue.put(workItem)
 
                         brightDelta = self.indigoDevice.brightness - float(brightness)
-                        if abs(brightDelta) > 1:
+                        if abs(brightDelta) > 2:
                             # next set the brightness
                             workItem = LightifyWorkItem(self.sceneName, self.indigoDevice.name, self.indigoDevice,
                                                         self.lightifyGroup, curLight,
-                                                        True, WorkItemType.BRIGHTNESS,
+                                                        False, WorkItemType.BRIGHTNESS,
                                                         None, 0, int(brightness), transMilli)
                             self.lightifyQueue.put(workItem)
                         else:
