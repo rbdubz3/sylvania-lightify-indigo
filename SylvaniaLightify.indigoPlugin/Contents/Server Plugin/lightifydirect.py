@@ -201,9 +201,8 @@ class Lightify:
     def __init__(self, host):
         self.__logger = logging.getLogger(MODULE)
         self.__logger.setLevel(logging.INFO)
-        #self.__logger.addHandler(logging.NullHandler())
         self.__logger.addHandler(IndigoLogHandler("LightifyDirect"))
-        self.__logger.info("...Logging %s", MODULE)
+        self.__logger.info("Initializing python %s, version=%s", MODULE, __version__)
 
         self.__seq = 1
         self.__groups = {}

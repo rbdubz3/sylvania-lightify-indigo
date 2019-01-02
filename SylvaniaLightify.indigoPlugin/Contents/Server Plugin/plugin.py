@@ -48,6 +48,7 @@ class Plugin(indigo.PluginBase):
         self.lightifyLock = threading.Lock()
         self.lightifyQueue = Queue.Queue(100)
         self.lastRefreshTime = datetime.datetime.now()
+        self.pluginVersion = pluginVersion
 
     ########################################
     def deviceStartComm(self, device):
@@ -91,7 +92,7 @@ class Plugin(indigo.PluginBase):
     # Startup
     ########################################
     def startup(self):
-        indigo.server.log(u"Startup called.")
+        indigo.server.log(u"Startup - SylvaniaLightify Plugin, version=" + self.pluginVersion)
         indigo.server.log(u"Initializing Lightify Hub, IP Address=" + self.lightifyHubIpAddr)
         try:
             self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr)
@@ -260,7 +261,7 @@ class Plugin(indigo.PluginBase):
 
     ########################################
     def runConcurrentThread(self):
-        indigo.server.log("Starting concurrent tread")
+        indigo.server.log("Starting concurrent thread")
         try:
             while True:
                 # we sleep (30 minutes) first because when the plugin starts, each device
@@ -1109,7 +1110,7 @@ class Plugin(indigo.PluginBase):
             redLevel = indigoDevice.states['redLevel.ui']
             greenLevel = indigoDevice.states['greenLevel.ui']
             blueLevel = indigoDevice.states['blueLevel.ui']
-        self.debugLog("updateUIForScene device state: name=" + dev.name + ", activeScene=" + activeScene +
+        self.debugLog("updateUIForScene device state: name=" + dev.name + ", activeScene=" + str(activeScene) +
                       ", brightness=" + str(brightness) + ", temp=" + whiteTemp + ", red=" + redLevel +
                       ", green=" + greenLevel + ", blue=" + blueLevel)
 
