@@ -218,7 +218,7 @@ class Plugin(indigo.PluginBase):
             self.debugLog(u"pluginPrefs now contains 20 scenes.")
 
         # If scenes exist, make sure there are 20 of them.
-        if not self.pluginPrefs.get('scenesList', False):
+        if not self.pluginPrefs.get('scenesList', False) or len(self.pluginPrefs['scenesList']) == 0:
             indigo.server.log(u"pluginPrefs lacks scenesList.  Adding.")
             # fill in the dictionary instead of the list
             self.pluginPrefs['scenesList'] = list()
@@ -241,14 +241,23 @@ class Plugin(indigo.PluginBase):
                         colorDict[key] = thesetting
                         settingNum = settingNum + 1
 
+                    # add some default data if nothing is there
+                    if len(colorDict) == 0:
+                        sceneData.append('13,89,1,0,90,500')
+                        sceneData.append('0,255,0,0,10,500')
+
                 if len(theScene) > 4:
                     circadianDict = dict()
                     sceneDict['circadianData'] = circadianDict
-                    circadianDict['CircadianColorTempValues'] = theScene[4][0]
-                    circadianDict['CircadianBrightnessValues'] = theScene[4][1]
+                    if len(theScene[4]) == 2:
+                        circadianDict['CircadianColorTempValues'] = theScene[4][0]
+                        circadianDict['CircadianBrightnessValues'] = theScene[4][1]
+                    else:
+                        # add some default data if there is insufficient data
+                        circadianDict['CircadianColorTempValues'] = '1500,2200,5500,6400,6500,4500,2200'
+                        circadianDict['CircadianBrightnessValues'] = '10,35,90,98,100,80,35'
 
                 self.debugLog(u"adding to scenesList. Scene name: " + str(sceneDict['sceneName']))
-
 
             # Add the new list of empty scenes to the prefs.
             self.pluginPrefs['scenesList'] = scenesList

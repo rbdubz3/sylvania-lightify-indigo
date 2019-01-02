@@ -222,32 +222,14 @@
 			<sceneType type="string">circadian</sceneType>
 		</Item>
 		<Item type="dict">
-			<circadianData type="dict">
-				<CircadianBrightnessValues type="string">20,55,80,95,100,85,60</CircadianBrightnessValues>
-				<CircadianColorTempValues type="string">1850,2600,5500,6400,6500,4000,2400</CircadianColorTempValues>
-			</circadianData>
-			<colorData type="dict">
-				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
-				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
-				<setting3Value type="string">43,89,1,0,90,500</setting3Value>
-			</colorData>
 			<sceneInterval type="string">60</sceneInterval>
-			<sceneName type="string">NutterButter7</sceneName>
+			<sceneName type="string">Scene 7</sceneName>
 			<sceneType type="string">match-colors</sceneType>
 		</Item>
 		<Item type="dict">
-			<circadianData type="dict">
-				<CircadianBrightnessValues type="string">20,55,80,95,100,85,60</CircadianBrightnessValues>
-				<CircadianColorTempValues type="string">1850,2600,5500,6400,6500,4000,2400</CircadianColorTempValues>
-			</circadianData>
-			<colorData type="dict">
-				<setting1Value type="string">13,89,1,0,90,500</setting1Value>
-				<setting2Value type="string">0,255,0,0,10,500</setting2Value>
-				<setting3Value type="string">93,89,1,0,90,500</setting3Value>
-			</colorData>
-			<sceneInterval type="string">600</sceneInterval>
-			<sceneName type="string">IamANUT</sceneName>
-			<sceneType type="string">circadian</sceneType>
+			<sceneInterval type="string">60</sceneInterval>
+			<sceneName type="string">Scene 8</sceneName>
+			<sceneType type="string">match-colors</sceneType>
 		</Item>
 		<Item type="dict">
 			<sceneInterval type="string">60</sceneInterval>
