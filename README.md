@@ -3,8 +3,9 @@
 <img src="/assets/img/lightify-icon.png" width="150"/>&nbsp;&nbsp;&nbsp;<img src="/assets/img/indigo-icon.png" width="150"/>
 
 This plugin is for use with the [Sylvania Osram Lightify][2] color changing bulbs. The plugin is an extension of the Indigo 'Dimmer'
-device type, and hence supports all of the dimmer functionality available in Indigo. It leverages an open source python tcp library
-for communicating with the [Lightify Hub][1]. The plugin has NOT been tested with any other hubs besides the [Lightify Hub][1].
+device type, and hence supports all of the dimmer functionality available in Indigo. It leverages an open source python library,
+which communicates with the [Lightify Hub][1] via LAN TCP port 4000 using a binary protocol.
+The plugin has NOT been tested with any other gateways besides the [Lightify Hub][1].
 
 ### Plugin Features
 * RGBW Support - extends the Indigo Dimmer device type - supports dimmer actions on/off/brightness/white levels/rgb levels

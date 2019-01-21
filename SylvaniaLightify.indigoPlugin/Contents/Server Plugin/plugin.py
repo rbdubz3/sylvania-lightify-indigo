@@ -18,6 +18,7 @@ import threading
 import Queue
 import sys
 import enum
+import logging
 
 ################################################################################
 # Globals
@@ -95,16 +96,16 @@ class Plugin(indigo.PluginBase):
         indigo.server.log(u"Startup - SylvaniaLightify Plugin, version=" + self.pluginVersion)
         indigo.server.log(u"Initializing Lightify Hub, IP Address=" + self.lightifyHubIpAddr)
         try:
-            self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr)
+            self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr, IndigoLogHandler("LightifyDirect"))
             self.lightifyConn.update_all_light_status()
             self.lightifyConn.update_group_list()
+            if self.debug:
+                self.lightifyConn.set_loglevel(logging.DEBUG)
+            else:
+                self.lightifyConn.set_loglevel(logging.INFO)
         except Exception as ex:
             self.errorLog("Error initializing Lightify Hub - " + str(ex))
             self.errorLog("Check IP address in Plugin Configuration.")
-
-        # Perform an initial version check.
-        #self.debugLog(u"Running plugin version check (if enabled).")
-        #self.updater.checkVersionPoll()
 
         if 'scenes' in self.pluginPrefs:
             scenes = self.pluginPrefs['scenes']
@@ -289,7 +290,7 @@ class Plugin(indigo.PluginBase):
                             for (addr, light) in self.lightifyConn.lights().iteritems():
                                 self.debugLog('...light details=' + str(light) + ', on=' + str(light.on()))
 
-                            # now we cycle through each hub/group
+                            # now we cycle through each group
                             for deviceId in self.deviceList:
                                 # call the update method with the device instance
                                 theDevice = indigo.devices[deviceId]
@@ -303,7 +304,7 @@ class Plugin(indigo.PluginBase):
                                         self.debugLog('...groupLight =' + str(theLight) + ', on=' + str(theLight.on()))
                                         if grpOnOffState is False and theLight.on() is 1:
                                             theLight.set_onoff(0)
-                                            self.lightifyConn.update_light_status(theLight)
+                                            #self.lightifyConn.update_light_status(theLight)
                                             newLight = self.lightifyConn.light_byname(theLight.name())
                                             indigo.server.log('runConcurrentThread - ATTEMPTED to turn off bulb - out of sync with group: ' +
                                                           str(theDevice.name) + ', updated status =' + str(newLight) + ', on=' + str(newLight.on()))
@@ -410,7 +411,6 @@ class Plugin(indigo.PluginBase):
                                     self.debugLog('...runConcurrentThread RELEASING lightifyLock')
                                     self.lightifyLock.release()
                         self.debugLog('...runConcurrentThread Done, num_tries=' + str(num_tries))
-                    self.debugLog('...runConcurrentThread EMPTY QUEUE')
                 except Queue.Empty:
                     indigo.server.log('...runConcurrentThread EXCEPTION EMPTY QUEUE, EMPTY QUEUE, EMPTY QUEUE, EMPTY QUEUE')
 
@@ -766,7 +766,6 @@ class Plugin(indigo.PluginBase):
 
     ### Start the scene
     def startScene(self, action, device):
-        self.debugLog(u"startScene: device.id: " + unicode(device.id) + u", action:\n" + unicode(action))
         indigoDevice = indigo.devices[action.deviceId]
         self.debugLog("...startScene - group device id: " + str(action.deviceId) + ", name: " + indigoDevice.name)
         theGroup = self.getLightifyGroup(indigoDevice)
@@ -841,7 +840,6 @@ class Plugin(indigo.PluginBase):
 
     ### stop the scene
     def stopScene(self, action, device):
-        self.debugLog(u"stopScene: device.id: " + unicode(device.id) + u", action:\n" + unicode(action))
         indigoDevice = indigo.devices[action.deviceId]
         self.debugLog("...stopScene - group device id: " + str(action.deviceId) + ", name: " + indigoDevice.name)
 
@@ -1092,9 +1090,11 @@ class Plugin(indigo.PluginBase):
         if self.debug:
             indigo.server.log("Turning off debug logging")
             self.pluginPrefs["showDebugInfo"] = False
+            self.lightifyConn.set_loglevel(logging.INFO)
         else:
             indigo.server.log("Turning on debug logging")
             self.pluginPrefs["showDebugInfo"] = True
+            self.lightifyConn.set_loglevel(logging.DEBUG)
         self.debug = not self.debug
 
     ########################################
@@ -1158,7 +1158,6 @@ class Plugin(indigo.PluginBase):
     ########################################
     def actionControlDevice(self, action, dev, gotLock=False):
         self.debugLog(u"...actionControlDevice - device=\"%s\", action=%s" % (dev.name, action.deviceAction))
-        self.debugLog('...actionControlDevice action=' + str(action))
         ###### First get the lightify device group
         theGroup = self.getLightifyGroup(dev)
         if theGroup is None:
@@ -1862,4 +1861,21 @@ class LightifyAction(object):
         self.deviceId = None
         self.configured = True
         self.textToSpeak = None
+
+
+class IndigoLogHandler(logging.Handler, object):
+    def __init__(self, displayName, level=logging.NOTSET):
+        super(IndigoLogHandler, self).__init__(level)
+        self.displayName = displayName
+
+    def emit(self, record):
+        # First, determine if it needs to be an Indigo error
+        is_error = True if record.levelno in (logging.ERROR, logging.CRITICAL) else False
+        type_string = self.displayName
+        # For any level besides INFO and ERROR (which Indigo handles), we append
+        # the debug level (i.e. Critical, Warning, Debug, etc) to the type string
+        if record.levelno not in (logging.INFO, logging.ERROR):
+            type_string += u" %s" % record.levelname.title()
+        # Then we write the message
+        indigo.server.log(message=self.format(record), type=type_string, isError=is_error)
 
