@@ -605,7 +605,7 @@ class Lightify:
                 self.__logger.debug("%d %d %d", i, pos, len(payload))
                 try:
                     (a, addr, stat, name, time_offline, extra) = struct.unpack("<HQ16s16sH6s",
-                                                                               payload)
+                                                                 payload)
                 except struct.error as e:
                     self.__logger.warning(
                         "couldn't unpack light status packet.")

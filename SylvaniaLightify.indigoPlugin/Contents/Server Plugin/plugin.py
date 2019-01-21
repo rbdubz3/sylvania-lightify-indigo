@@ -879,10 +879,8 @@ class Plugin(indigo.PluginBase):
         deviceSceneThread = None
         stoppedThread = False
         for gThread in self.deviceThreads:
-            self.debugLog("...stopSceneThread Found scene thread: " + str(gThread.indigoDevice.name))
             if gThread.indigoDevice.name == indigoDevice.name:
                 deviceSceneThread = gThread
-                self.debugLog("...stopSceneThread Found matching scene thread: " + indigoDevice.name)
 
         if deviceSceneThread is not None:
             self.debugLog("...stopSceneThread Stopping scene thread: " + indigoDevice.name)
@@ -892,13 +890,7 @@ class Plugin(indigo.PluginBase):
             stoppedThread = True
             # any remaining scene workItems will be skipped if an activeScene Thread isn't found for the device
 
-        # lets also output all of the threads in action
-        sceneThreadCount = 0
-        for curSceneThread in self.deviceThreads:
-            sceneThreadCount = sceneThreadCount + 1
-            self.debugLog("...stopSceneThread Found running scene thread - groupName=" + curSceneThread.indigoDevice.name +
-                              ",thread=" +str(curSceneThread))
-        self.debugLog("...stopSceneThread Total remaining scene threads - " + str(sceneThreadCount))
+        self.debugLog("...stopSceneThread Total remaining scene threads - " + str(len(self.deviceThreads)))
         return stoppedThread
 
     ########################################

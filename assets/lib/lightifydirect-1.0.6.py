@@ -29,7 +29,7 @@ import threading
 from collections import defaultdict
 from enum import Enum
 
-__version__ = '1.0.6.1'
+__version__ = '1.0.6'
 
 MODULE = __name__
 PORT = 4000
@@ -604,8 +604,8 @@ class Lightify:
 
                 self.__logger.debug("%d %d %d", i, pos, len(payload))
                 try:
-                    (a, addr, stat, name, time_offline, extra) = struct.unpack("<HQ16s16sH6s",
-                                                                               payload)
+                    (a, addr, stat, name, extra) = struct.unpack("<HQ16s16sQ",
+                                                                 payload)
                 except struct.error as e:
                     self.__logger.warning(
                         "couldn't unpack light status packet.")
@@ -619,9 +619,7 @@ class Lightify:
                     # Names are UTF-8 encoded, but not data.
                     name = name.decode('utf-8').replace('\0', "")
 
-                self.__logger.debug('light: %x %x %s', a, addr, name )
-
-
+                self.__logger.debug('light: %x %x %s %x', a, addr, name, extra)
                 if addr in old_lights:
                     light = old_lights[addr]
                 else:
@@ -633,16 +631,13 @@ class Lightify:
                     ver1_1, ver1_2, ver1_3, ver1_4, ver1_5)
                 light.set_devicetype(id_to_devicetype[device_type])
                 self.__logger.debug('status: %x %0x', b, h)
-                self.__logger.debug('zone id: %x', zone_id)
                 self.__logger.debug('onoff: %d', on)
                 self.__logger.debug('temp:  %d', temp)
                 self.__logger.debug('lum:   %d', lum)
                 self.__logger.debug('red:   %d', r)
                 self.__logger.debug('green: %d', g)
                 self.__logger.debug('blue:  %d', b)
-                self.__logger.debug('time offline: %d', time_offline)
-                if time_offline>1:
-                    on = False
+
                 light.update_status(on, lum, temp, r, g, b)
                 new_lights[addr] = light
             # return (on, lum, temp, r, g, b)
