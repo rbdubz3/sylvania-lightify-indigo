@@ -72,7 +72,7 @@
 				<Item type="string">0,255,0,0,10,500</Item>
 			</Item>
 			<Item type="vector">
-				<Item type="string">1500,2200,5500,6400,6500,4500,2200</Item>
+				<Item type="string">1900,2200,5500,6400,6500,4500,2200</Item>
 				<Item type="string">10,35,90,98,100,80,35</Item>
 			</Item>
 		</Item>
@@ -211,7 +211,7 @@
 		<Item type="dict">
 			<circadianData type="dict">
 				<CircadianBrightnessValues type="string">10,35,90,98,100,80,35</CircadianBrightnessValues>
-				<CircadianColorTempValues type="string">1500,2200,5500,6400,6500,4500,2200</CircadianColorTempValues>
+				<CircadianColorTempValues type="string">1900,2200,5500,6400,6500,4500,2200</CircadianColorTempValues>
 			</circadianData>
 			<colorData type="dict">
 				<setting1Value type="string">13,89,1,0,90,500</setting1Value>

@@ -205,7 +205,7 @@ class Plugin(indigo.PluginBase):
                     sceneData.append('0,255,0,0,10,500')
                     scene.append(sceneData)
                     circadianData = list()
-                    circadianData.append('1500,2200,5500,6400,6500,4500,2200')
+                    circadianData.append('1900,2200,5500,6400,6500,4500,2200')
                     circadianData.append('10,35,90,98,100,80,35')
                     scene.append(circadianData)
                 else:
@@ -255,7 +255,7 @@ class Plugin(indigo.PluginBase):
                         circadianDict['CircadianBrightnessValues'] = theScene[4][1]
                     else:
                         # add some default data if there is insufficient data
-                        circadianDict['CircadianColorTempValues'] = '1500,2200,5500,6400,6500,4500,2200'
+                        circadianDict['CircadianColorTempValues'] = '1900,2200,5500,6400,6500,4500,2200'
                         circadianDict['CircadianBrightnessValues'] = '10,35,90,98,100,80,35'
 
                 self.debugLog(u"adding to scenesList. Scene name: " + str(sceneDict['sceneName']))
@@ -550,7 +550,7 @@ class Plugin(indigo.PluginBase):
             if 'CircadianColorTempValues' in circDict.keys():
                 valuesDict['CircadianColorTempValues'] = circDict['CircadianColorTempValues']
             else:
-                valuesDict['CircadianColorTempValues'] = "1500,2300,4000,6400,6500,4500,2200"
+                valuesDict['CircadianColorTempValues'] = "1900,2300,4000,6400,6500,4500,2200"
             if 'CircadianBrightnessValues' in circDict.keys():
                 valuesDict['CircadianBrightnessValues'] = circDict['CircadianBrightnessValues']
             else:
@@ -980,10 +980,10 @@ class Plugin(indigo.PluginBase):
             self.errorLog(errorText)
             return False, valuesDict, errorsDict
 
-        if isTemp == True and (colorTemp < 1500 or colorTemp > 6500):
-            errorsDict[configStr] =  configStr + u" ColorTemp must be between 1500 and 2500."
+        if isTemp == True and (colorTemp < 1900 or colorTemp > 6500):
+            errorsDict[configStr] =  configStr + u" ColorTemp must be between 1900 and 2500."
             errorsDict['showAlertText'] += errorsDict[configStr]
-            errorText = configStr + u" ColorTemp must be between 1500 and 2500."
+            errorText = configStr + u" ColorTemp must be between 1900 and 2500."
             self.errorLog(errorText)
             return False, valuesDict, errorsDict
 
@@ -1052,13 +1052,13 @@ class Plugin(indigo.PluginBase):
             self.errorLog(errorText)
             return False, valuesDict, errorsDict
 
-        if isTemp is True and (lateNight < 1500 or lateNight > 6500 or preSunrise < 1500 or preSunrise > 6500 \
-                or postSunrise < 1500 or postSunrise > 6500 or amPeak < 1500 or amPeak > 6500 \
-                or maxVal < 1500 or maxVal > 6500 or preSunset < 1500 or preSunset > 6500 \
-                or postSunset < 1500 or postSunset > 6500):
-            errorsDict[configStr] =  configStr + u" values must be between 1500 and 6500."
+        if isTemp is True and (lateNight < 1900 or lateNight > 6500 or preSunrise < 1900 or preSunrise > 6500 \
+                or postSunrise < 1900 or postSunrise > 6500 or amPeak < 1900 or amPeak > 6500 \
+                or maxVal < 1900 or maxVal > 6500 or preSunset < 1900 or preSunset > 6500 \
+                or postSunset < 1900 or postSunset > 6500):
+            errorsDict[configStr] =  configStr + u" values must be between 1900 and 6500."
             errorsDict['showAlertText'] += errorsDict[configStr]
-            errorText = configStr + u" values must be between 1500 and 6500."
+            errorText = configStr + u" values must be between 1900 and 6500."
             self.errorLog(errorText)
             return False, valuesDict, errorsDict
 

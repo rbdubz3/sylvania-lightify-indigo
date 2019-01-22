@@ -38,7 +38,7 @@ To date, the bulb types listed below have without issue. Product info can be fou
 
 The Color RGBW bulbs are more expensive, but highly recommended over the tunable/adjustable white ones. The main
 product deficiency with the tunable/adjustable white bulbs is they have a minimum color temp of 2700K. For the 'Circadian'
-scene functionality, it is desirable to go down much lower - closer to 1500K for a nice warm yellow/orange glow.
+scene functionality, it is desirable to go down much lower - closer to 1900K for a nice warm yellow/orange glow.
 
 [1]: https://consumer.sylvania.com/our-products/smart/getting-started/
 [2]: https://consumer.sylvania.com/our-products/smart/sylvania-smart-zigbee-products-menu/index.jsp

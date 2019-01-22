@@ -48,7 +48,7 @@
 			<Field id="simpleSeparator2" type="separator"/>
 			<Field id="settingsSummaryLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
 				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
-				<Label>For each setting below, choose between either RGB or White Temperature. If ColorTemp is provided, the RGB values will be ignored. RGB values are 0-255, ColorTemp in Kelvin is 1500-6500, Brightness % 0-100, Transition in milliseconds (1 sec = 1000 millis). If a setting isn't used, just leave empty.</Label>
+				<Label>For each setting below, choose between either RGB or White Temperature. If ColorTemp is provided, the RGB values will be ignored. RGB values are 0-255, ColorTemp in Kelvin is 1900-6500, Brightness % 0-100, Transition in milliseconds (1 sec = 1000 millis). If a setting isn't used, just leave empty.</Label>
 			</Field>
 			<Field id="settingFormatLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
 				   visibleBindingId="sceneType" visibleBindingValue="rotate-colors,match-colors">
@@ -100,9 +100,9 @@
 			</Field>
 			<Field id="circadianTempExLabel" type="label" alignWithControl="false" fontSize="small" fontColor="darkgray"
 				   visibleBindingId="sceneType" visibleBindingValue="circadian">
-				<Label>Color Temp(1500K-6500K): 1500,2300,4000,6400,6500,4500,2200</Label>
+				<Label>Color Temp(1900K-6500K): 1900,2300,4000,6400,6500,4500,2200</Label>
 			</Field>
-			<Field type="textField" id="CircadianColorTempValues" defaultValue="1500,2300,4000,6400,6500,4500,2200"
+			<Field type="textField" id="CircadianColorTempValues" defaultValue="1900,2300,4000,6400,6500,4500,2200"
 				   visibleBindingId="sceneType" visibleBindingValue="circadian">
 				<Label>Color Temp Values:</Label>
 			</Field>
