@@ -311,7 +311,7 @@ class Group(Luminary):
         return self.__conn.build_command(command, self, data)
 
 class Lightify:
-    def __init__(self, host, loghandler=None):
+    def __init__(self, host, new_device_types=None, loghandler=None):
         self.__logger = logging.getLogger(MODULE)
         self.__logger.setLevel(logging.INFO)
         if loghandler is not None:
@@ -350,7 +350,6 @@ class Lightify:
             level_str = 'ERROR'
         elif debugLevel == logging.CRITICAL:
             level_str = 'CRITICAL'
-
         self.__logger.info("set_loglevel to '%s'", level_str)
 
     def connect(self):

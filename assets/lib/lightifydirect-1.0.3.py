@@ -179,7 +179,7 @@ class Group(Luminary):
         return self.__conn.build_command(command, self, data)
 
 class Lightify:
-    def __init__(self, host, loghandler=None):
+    def __init__(self, host, new_device_types=None, loghandler=None):
         self.__logger = logging.getLogger(MODULE)
         self.__logger.setLevel(logging.INFO)
         if loghandler is not None:

@@ -11,7 +11,7 @@
 import indigo
 import urllib2
 from xml.dom.minidom import parseString
-import lightifydirect
+import lightify
 import time
 import datetime
 import threading
@@ -65,12 +65,12 @@ class Plugin(indigo.PluginBase):
                 props["SupportsColor"] = True
                 props["SupportsWhiteTemperature"] = True
 
-            self.debugLog("Updating device id1: " + str(device.id) + ", name: " + device.name)
+            self.debugLog("Updating device id: " + str(device.id) + ", name: " + device.name)
             device.replacePluginPropsOnServer(props)
             device.updateStateImageOnServer(indigo.kStateImageSel.Auto)
 
             try:
-                self.update(device)
+                self.refreshDeviceStatus(device)
                 self.deviceList.append(device.id)
             except Exception as ex:
                 self.errorLog("Exception hit in deviceStartComm - " + str(ex))
@@ -96,13 +96,21 @@ class Plugin(indigo.PluginBase):
         indigo.server.log(u"Startup - SylvaniaLightify Plugin, version=" + self.pluginVersion)
         indigo.server.log(u"Initializing Lightify Hub, IP Address=" + self.lightifyHubIpAddr)
         try:
-            self.lightifyConn = lightifydirect.Lightify(self.lightifyHubIpAddr, IndigoLogHandler("LightifyDirect"))
+            loglevel = logging.INFO
+            if self.debug:
+                loglevel = logging.DEBUG
+            self.lightifyConn = lightify.Lightify(self.lightifyHubIpAddr, None, loglevel, IndigoLogHandler("LightifyDirect"))
             self.lightifyConn.update_all_light_status()
             self.lightifyConn.update_group_list()
-            if self.debug:
-                self.lightifyConn.set_loglevel(logging.DEBUG)
-            else:
-                self.lightifyConn.set_loglevel(logging.INFO)
+            self.lightifyConn.update_scene_list()
+
+            for theLight in self.lightifyConn.lights():
+                self.debugLog('...startup - light=' + str(theLight))
+            for theGroup in self.lightifyConn.groups():
+                self.debugLog('...startup - group=' + str(theGroup))
+            for theScene in self.lightifyConn.scenes():
+                self.debugLog('...startup - scene=' + str(theScene))
+
         except Exception as ex:
             self.errorLog("Error initializing Lightify Hub - " + str(ex))
             self.errorLog("Check IP address in Plugin Configuration.")
@@ -294,20 +302,28 @@ class Plugin(indigo.PluginBase):
                             for deviceId in self.deviceList:
                                 # call the update method with the device instance
                                 theDevice = indigo.devices[deviceId]
-                                self.update(theDevice)
                                 self.debugLog("...Updating Lightify Group: Name=" + str(theDevice.name) + ", " + str(theDevice.states))
-                                theGroup = self.getLightifyGroup(theDevice)
-                                grpOnOffState = theDevice.states['onOffState']
-                                for curLight in theGroup.lights():
-                                    theLight = self.lightifyConn.lights()[curLight]
-                                    if theLight is not None:
-                                        self.debugLog('...groupLight =' + str(theLight) + ', on=' + str(theLight.on()))
-                                        if grpOnOffState is False and theLight.on() is 1:
-                                            theLight.set_onoff(0)
-                                            #self.lightifyConn.update_light_status(theLight)
-                                            newLight = self.lightifyConn.light_byname(theLight.name())
-                                            indigo.server.log('runConcurrentThread - ATTEMPTED to turn off bulb - out of sync with group: ' +
-                                                          str(theDevice.name) + ', updated status =' + str(newLight) + ', on=' + str(newLight.on()))
+                                self.refreshDeviceStatus(theDevice)
+                                #self.debugLog("...Updating Lightify Group: Name=" + str(theDevice.name) + ", " + str(theDevice.states))
+                                #theGroup = self.getLightifyGroup(theDevice)
+                                #grpOnOffState = theDevice.states['onOffState']
+                                #for curLight in theGroup.lights():
+                                #    theLight = self.lightifyConn.lights()[curLight]
+                                #    if theLight is not None:
+                                #        self.debugLog('...groupLight =' + str(theLight) + ', on=' + str(theLight.on()))
+                                #        fetch_status = False
+                                #        if grpOnOffState is False and theLight.on() is 1:
+                                #            theLight.set_onoff(0)
+                                #            fetch_status = True
+                                #        elif grpOnOffState is True and theLight.on() is 0:
+                                #            theLight.set_onoff(1)
+                                #            fetch_status = True
+                                #        if fetch_status is True:
+                                #            self.lightifyConn.update_light_status(theLight)
+                                #            newLight = self.lightifyConn.light_byname(theLight.name())
+                                #            indigo.server.log('runConcurrentThread - ATTEMPTED bulb update - out of sync with group: ' +
+                                #                          str(theDevice.name) + ', updated status =' + str(newLight) + ', on=' + str(newLight.on()))
+
                             self.lastRefreshTime = datetime.datetime.now()
 
                             # lets also output all of the threads in action
@@ -417,8 +433,7 @@ class Plugin(indigo.PluginBase):
         except self.StopThread:
             pass
 
-
-    ########################################
+########################################
     def groupListGenerator(self, filter="", valuesDict=None, typeId="", targetId=0):
         # Used in actions that need a list of Lightify groups.
         self.debugLog(u"Starting groupListGenerator.\n  filter: "
@@ -429,8 +444,6 @@ class Plugin(indigo.PluginBase):
 
         groupId = 0
         for theGroup in self.lightifyConn.groups():
-            #theGroup = self.lightifyConn.groups()[grpName]
-            #self.debugLog('...found group name=' + str(grpName))
             self.debugLog('...theGroup - groupId=' + str(groupId) + ', details=' + str(theGroup))
             returnGroupList.append([theGroup, theGroup])
             groupId = groupId + 1
@@ -908,22 +921,45 @@ class Plugin(indigo.PluginBase):
         return theGroup
 
     ########################################
-    def update(self, device):
-        self.debugLog("Updating device id: " + str(device.id) + ", name: " + device.name)
+    def refreshDeviceStatus(self, device):
+        self.debugLog("refreshDeviceStatus device id: " + str(device.id) + ", name: " + device.name)
         theGroup = self.getLightifyGroup(device)
 
         # refresh the states based on what is found on the first device
         if theGroup is not None:
-            theLight = None
+            grpOnOffState = device.states['onOffState']
+            activeScene   = device.states['activeScene'].strip()
+            indigo.server.log("refreshDeviceStatus - Lightify Group: Name=" + str(device.name) + ", on=" + str(grpOnOffState) +
+                          ", activeScene=" + activeScene)
             for curLight in theGroup.lights():
                 theLight = self.lightifyConn.lights()[curLight]
-                if theLight.on() == 1:
-                    break
+                if theLight is not None:
+                    self.debugLog('...refreshDeviceStatus - groupLight =' + str(theLight) + ', on=' + str(theLight.on()))
+                    fetch_status = False
+                    # first check to see if the onOffState is matching
+                    if grpOnOffState == False and theLight.on() == 1:
+                        theLight.set_onoff(0)
+                        fetch_status = True
+                    elif grpOnOffState == True and theLight.on() == 0:
+                        theLight.set_onoff(1)
+                        fetch_status = True
+                    ## next check active scene - if it is circadian make the bulbs match the scene?
 
-            if theLight is not None:
-                self.debugLog('...theLight =' + str(theLight) + ', on=' + str(theLight.on()))
+                    if fetch_status == True:
+                        self.lightifyConn.update_light_status(theLight)
+                        newLight = self.lightifyConn.light_byname(theLight.name())
+                        indigo.server.log('refreshDeviceStatus - ATTEMPTING bulb sync with group: ' +
+                                          str(device.name) + ', groupStatus=' + str(grpOnOffState) +
+                                          ', updated status =' + str(newLight) + ', on=' + str(newLight.on()))
+                    ## lets output the current state of each bulb
+                    indigo.server.log('... bulb state=' + str(theLight) + ', on=' + str(theLight.on() == 1) +
+                                          ', R=' + str(theLight.red()) + 
+                                          ', G=' + str(theLight.green()) +
+                                          ', B=' + str(theLight.blue()) +
+                                          ', Temp=' + str(theLight.temp()))
 
-    ########################################
+
+########################################
     # UI Validate, Close, and Actions defined in Actions.xml:
     ########################################
     def validateDeviceConfigUi(self, valuesDict, typeId, devId):
@@ -1174,7 +1210,6 @@ class Plugin(indigo.PluginBase):
                         # And then tell the Indigo Server to update the state.
                         #dev.updateStateOnServer("onOffState", True)
                         dev.updateStateOnServer('onOffState', value=True, uiValue='on')
-                        #self.updateUIForScene(dev)
                     else:
                         # Else log failure but do NOT update state on Indigo Server.
                         indigo.server.log(u"\"%s\" %s failed" % (dev.name, "on"), isError=True)
@@ -1239,7 +1274,6 @@ class Plugin(indigo.PluginBase):
 
                         # And then tell the Indigo Server to update the state:
                         dev.updateStateOnServer("brightnessLevel", newBrightness)
-                        #self.updateUIForScene(dev)
                     else:
                         # Else log failure but do NOT update state on Indigo Server.
                         indigo.server.log(u"\"%s\" %s to %d failed" % (dev.name, "set brightness", newBrightness),
@@ -1260,7 +1294,6 @@ class Plugin(indigo.PluginBase):
 
                         # And then tell the Indigo Server to update the state:
                         dev.updateStateOnServer("brightnessLevel", newBrightness)
-                        #self.updateUIForScene(dev)
                     else:
                         # Else log failure but do NOT update state on Indigo Server.
                         indigo.server.log(u"\"%s\" %s to %d failed" % (dev.name, "brighten", newBrightness),
@@ -1281,8 +1314,6 @@ class Plugin(indigo.PluginBase):
 
                         # And then tell the Indigo Server to update the state:
                         dev.updateStateOnServer("brightnessLevel", newBrightness)
-                        #self.updateUIForScene(dev)
-
                     else:
                         # Else log failure but do NOT update state on Indigo Server.
                         indigo.server.log(u"\"%s\" %s to %d failed" % (dev.name, "dim", newBrightness),
