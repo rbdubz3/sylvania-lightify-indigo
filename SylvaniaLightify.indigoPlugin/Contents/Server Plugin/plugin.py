@@ -102,14 +102,14 @@ class Plugin(indigo.PluginBase):
             self.lightifyConn = lightify.Lightify(self.lightifyHubIpAddr, None, loglevel, IndigoLogHandler("LightifyDirect"))
             self.lightifyConn.update_all_light_status()
             self.lightifyConn.update_group_list()
-            self.lightifyConn.update_scene_list()
+            #self.lightifyConn.update_scene_list()
 
             for theLight in self.lightifyConn.lights():
                 self.debugLog('...startup - light=' + str(theLight))
             for theGroup in self.lightifyConn.groups():
                 self.debugLog('...startup - group=' + str(theGroup))
-            for theScene in self.lightifyConn.scenes():
-                self.debugLog('...startup - scene=' + str(theScene))
+            #for theScene in self.lightifyConn.scenes():
+            #    self.debugLog('...startup - scene=' + str(theScene))
 
         except Exception as ex:
             self.errorLog("Error initializing Lightify Hub - " + str(ex))
@@ -930,7 +930,7 @@ class Plugin(indigo.PluginBase):
             grpOnOffState = device.states['onOffState']
             activeScene   = device.states['activeScene'].strip()
             indigo.server.log("refreshDeviceStatus - Lightify Group: Name=" + str(device.name) + ", on=" + str(grpOnOffState) +
-                          ", activeScene=" + activeScene)
+                          ", activeScene=" + activeScene + ", numLights=" + str(len(theGroup.lights()) ) )
             for curLight in theGroup.lights():
                 theLight = self.lightifyConn.lights()[curLight]
                 if theLight is not None:
