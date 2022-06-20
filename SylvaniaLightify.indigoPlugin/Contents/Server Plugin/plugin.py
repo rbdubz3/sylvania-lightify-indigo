@@ -330,13 +330,13 @@ class Plugin(indigo.PluginBase):
                             sceneThreadCount = 0
                             for curSceneThread in self.deviceThreads:
                                 sceneThreadCount = sceneThreadCount + 1
-                                self.debugLog("...Running scene thread - groupName=" + curSceneThread.indigoDevice.name +
+                                indigo.server.log("...Running scene thread - groupName=" + curSceneThread.indigoDevice.name +
                                                   ",thread=" +str(curSceneThread))
-                            self.debugLog("...Total scene threads - " + str(sceneThreadCount))
+                            indigo.server.log("...Total scene threads - " + str(sceneThreadCount))
 
                     finally:
                         if have_it is True:
-                            self.debugLog('...runConcurrentThread RELEASING lightifyLock after refreshing Device Status')
+                            indigo.server.log('...runConcurrentThread RELEASING lightifyLock after refreshing Device Status')
                             self.lightifyLock.release()
 
                 # TODO should sleep the minimum of all sleeps for the scenes
